@@ -36,7 +36,7 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations })
             <div className="project-thumb-wrap">
               <img
                 src={`/img/main_imges_folder/${element.project_img_src}`}
-                alt=""
+                alt={element.project_name || ""}
                 className="project_img "
               />
               {element.is_hidden && (

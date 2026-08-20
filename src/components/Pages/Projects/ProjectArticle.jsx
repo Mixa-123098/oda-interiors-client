@@ -48,7 +48,7 @@ const ProjectHeader = ({ dataList, parallaxOffset }) => {
           //   dataList && dataList.project_header_img
           // }`}
           style={{ transform: `translateY(${parallaxOffset}px)` }}
-          alt=""
+          alt={dataList?.project_name || ""}
         />
       </div>
     </>
@@ -207,7 +207,7 @@ const ProjectArticlePlanning = ({ id, translation }) => {
   );
 };
 
-const ProjectArticleImges = ({ id }) => {
+const ProjectArticleImges = ({ id, name }) => {
   const [projectImges, setProjectImges] = useState([]);
 
   useEffect(() => {
@@ -232,7 +232,7 @@ const ProjectArticleImges = ({ id }) => {
       >
         <img
           src={`/img/main_imges_folder/${element.img}`}
-          alt="planning"
+          alt={name || "planning"}
           className="planning-img"
         />
       </div>
@@ -456,13 +456,18 @@ const ProjectArticle = observer(() => {
   const seoDescription =
     resolvedDataList &&
     (t(briefKey) !== briefKey ? t(briefKey) : resolvedDataList.project_brief);
+  // Share previews of a project link should show the project's own photo,
+  // not the site logo.
+  const seoImage =
+    resolvedDataList?.project_header_img &&
+    `https://oda-interiors.com/img/main_imges_folder/${resolvedDataList.project_header_img}`;
 
   const isStaff =
     authStore.user?.role === "admin" || authStore.user?.role === "moderator";
 
   return (
     <>
-      <Seo title={seoTitle} description={seoDescription} />
+      <Seo title={seoTitle} description={seoDescription} image={seoImage} />
       {isStaff && resolvedDataList?.is_hidden && (
         <div
           className="alert alert-warning text-center mb-0 rounded-0"
@@ -475,7 +480,7 @@ const ProjectArticle = observer(() => {
       <ProjectHeader dataList={resolvedDataList} parallaxOffset={parallaxOffset} />
       <ProjectArticleBrief dataList={resolvedDataList} />
       <ProjectArticlePlanning id={id} translation={translation} />
-      <ProjectArticleImges id={id} />
+      <ProjectArticleImges id={id} name={seoTitle} />
 
       <PrevAndNextProject id={id} />
       <Footer />
