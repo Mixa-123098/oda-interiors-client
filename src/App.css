@@ -48,6 +48,13 @@ html {
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apple-design §15: comfortable leading for body copy (default ~1.2 is tight). */
+p {
+  line-height: 1.6;
 }
 
 h1,
@@ -66,6 +73,7 @@ h4 {
 .pages-header {
   box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.75);
   font-size: 2vw;
+  letter-spacing: -0.02em;
   padding-top: 10vw;
   padding-bottom: 5vh;
 
@@ -184,6 +192,9 @@ video {
 
 .titlePage {
   font-size: clamp(2rem, 2.5vw + 2.5vh, 10rem);
+  /* Apple-design §15: large display type wants tight leading + negative tracking. */
+  line-height: 1.05;
+  letter-spacing: -0.02em;
 }
 
 .subtitlePage {
@@ -772,4 +783,38 @@ footer {
 
 .admin-tab-content {
   padding: 2rem 0 3rem;
+}
+
+/* Apple-design §1 & §10: instant press feedback — interactive elements should
+   react on pointer-down (the tap), not only on release. A small scale reads as
+   a physical push. */
+.btn:active,
+.qc-btn:active,
+.block_elem:active,
+.projects-nav-button:active,
+.language-selector-toggle:active,
+.language-selector-option:active,
+.subtitlePage a:active,
+.first-block-button:active {
+  transform: scale(0.96);
+}
+
+/* Apple-design §14: honour prefers-reduced-motion. Replace slides/springs/
+   parallax and AOS reveals with instant/opacity changes; drop overshoot. Users
+   with vestibular sensitivity shouldn't get the full-screen video motion,
+   scroll animations or hover translations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

@@ -41,6 +41,13 @@ const PricePage = lazy(() => import("./components/Pages/PricePage"));
 const NotFoundPage = lazy(() => import("./components/Pages/NotFoundPage"));
 
 const MainPageContainer = ({ updateIndexFromSecBlock }) => {
+  // Apple-design §14/§207: a full-screen looping video is exactly the kind of
+  // background motion reduced-motion users should be spared. Without autoplay
+  // the <video> shows its poster (a static hero frame) instead.
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   return (
     <div>
       <Seo />
@@ -49,7 +56,7 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
         <div className="overlay"></div>
 
         <video
-          autoPlay
+          autoPlay={!prefersReducedMotion}
           loop
           muted
           playsInline
@@ -60,7 +67,7 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
           <source src={loftMp4} type="video/mp4" />
         </video>
         <video
-          autoPlay
+          autoPlay={!prefersReducedMotion}
           loop
           muted
           playsInline

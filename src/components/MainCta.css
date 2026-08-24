@@ -10,6 +10,7 @@
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 600;
   color: #222;
+  letter-spacing: -0.02em;
   margin-bottom: 1rem;
 }
 
