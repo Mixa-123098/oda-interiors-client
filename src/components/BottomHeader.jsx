@@ -6,48 +6,31 @@ import { useState } from "react";
 function BottomHeader() {
   const [count, setCount] = useState(1);
 
+  // Crossfade to slide `index` (1-based): only the active layer stays opaque,
+  // and CSS transitions the opacity (apple-design §3/§4 — no hard display
+  // cuts, no null-crash from querying a maybe-absent ".video.active").
+  function showSlide(index) {
+    document.querySelectorAll(".video").forEach((video, i) => {
+      video.classList.toggle("active", i === index - 1);
+    });
+  }
+
   function handleClick(setCount, index) {
     setCount(index);
-    document.querySelector(".video.active").classList.remove("active");
-    document.querySelectorAll(".video")[index - 1].classList.add("active");
-    document.querySelectorAll(".video").forEach((video) => {
-      video.style.display = "none";
-    });
-    document.querySelectorAll(".video")[index - 1].style.display = "block";
+    showSlide(index);
   }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCount((prevCount) => {
         const newCount = prevCount >= 3 ? 1 : prevCount + 1;
-        blockAnimate(newCount);
+        showSlide(newCount);
         return newCount;
       });
     }, 6000);
 
     return () => clearInterval(intervalId);
   }, []);
-
-  function blockAnimate(count) {
-    let videos = document.querySelectorAll(".video");
-
-    switch (count) {
-      case 1:
-        videos[0].style.display = "block";
-        videos[2].style.display = "none";
-        break;
-      case 2:
-        videos[0].style.display = "none";
-        videos[1].style.display = "block";
-        break;
-      case 3:
-        videos[1].style.display = "none";
-        videos[2].style.display = "block";
-        break;
-      default:
-      // do nothing
-    }
-  }
 
   function BottomHeaderIcons() {
     return (

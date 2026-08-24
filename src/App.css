@@ -117,9 +117,28 @@ h4 {
 }
 
 .main {
+  position: relative;
   width: var(--fullWidth);
   height: 100svh;
   /* height: var(--fullHeight); */
+}
+
+/* Apple-design §3/§4: the hero slides crossfade (opacity) instead of hard
+   display:none cuts. All three media layers are stacked in the same spot; only
+   the active one is opaque, and switching fades smoothly between them. */
+.main .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100svh;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.main .video.active {
+  opacity: 1;
 }
 
 video {

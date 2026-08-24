@@ -72,12 +72,12 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
           muted
           playsInline
           poster={chehPoster}
-          className="video a"
+          className="video"
         >
           <source src={chehWebm} type="video/webm" />
           <source src={chehMp4} type="video/mp4" />
         </video>
-        <img src={bgvideo3} alt="" className="img video a" />
+        <img src={bgvideo3} alt="" className="img video" />
 
         <div className="header-content">
           <BottomHeader />
