@@ -17,6 +17,7 @@ import SecondBlock from "./components/Bloks/SecondBlock";
 import SixBlock from "./components/Bloks/SixBlock";
 import ForthBlock from "./components/Bloks/ForthBlock";
 import FifthBlock from "./components/Bloks/FifthBlock";
+import MainCta from "./components/MainCta";
 import loftWebm from "./assets/loft-1080.webm";
 import loftMp4 from "./assets/loft-1080.mp4";
 import loftPoster from "./assets/loft-poster.jpg";
@@ -80,6 +81,7 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
       <SixBlock />
       <ForthBlock />
       <FifthBlock />
+      <MainCta />
       <Footer />
     </div>
   );
