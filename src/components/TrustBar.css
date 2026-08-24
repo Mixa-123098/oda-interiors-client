@@ -1,0 +1,38 @@
+.trust-bar {
+  max-width: 1000px;
+  margin: 3rem auto 0;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem 4rem;
+  border-top: 1px solid #ececec;
+  border-bottom: 1px solid #ececec;
+}
+
+.trust-item {
+  text-align: center;
+  min-width: 150px;
+}
+
+.trust-value {
+  font-family: "Playfair Display", "Inter", serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 600;
+  color: #222;
+  line-height: 1.1;
+}
+
+.trust-label {
+  color: #6f6f6f;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 600px) {
+  .trust-bar {
+    gap: 1.8rem;
+    padding: 2rem 1rem;
+  }
+}

@@ -16,7 +16,7 @@ import { API_URL } from "./config/api";
 // written back into the cache. Trade-off: an admin's edit reaches a returning
 // visitor within the cache TTL (24h) rather than instantly. Bump CACHE_VERSION
 // to force-invalidate every client's cache immediately if ever needed.
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 
 i18n
   .use(ChainedBackend)
