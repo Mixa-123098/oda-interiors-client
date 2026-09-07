@@ -100,7 +100,7 @@ const Blocks = ({ updateIndexFromSecBlock }) => {
       >
         <Link to="/projects" className="block-container">
           <div style={{ position: "relative" }}>
-            <h1 className="projects-text">{project}</h1>
+            <h2 className="projects-text">{project}</h2>
             <h2 className="projects-subtext">{interiorList[index]}</h2>
 
             <div className="blockOverlay"></div>

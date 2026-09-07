@@ -9,7 +9,7 @@ const SixBlock = () => {
   return (
     <div className="first-block">
       <div className="first-block-content-container">
-        <h1>{t("mainPage.block3.title")}</h1>
+        <h2>{t("mainPage.block3.title")}</h2>
         <div className="row pt-4 pb-2">
           <div className="col">
             <p>{t("mainPage.block3.mainTextPartOne")}</p>

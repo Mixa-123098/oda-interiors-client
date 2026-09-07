@@ -10,7 +10,7 @@ const ForthBlock = () => {
     <>
       <div className="first-block bg-color">
         <div className="first-block-content-container">
-          <h1 className="text-light"> {t("mainPage.block4.title")}</h1>
+          <h2 className="text-light"> {t("mainPage.block4.title")}</h2>
           <div className="row pt-4 pb-2">
             <div className="col">
               <p className="text-light">

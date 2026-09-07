@@ -9,7 +9,7 @@ const FifthBlock = () => {
   return (
     <div className="first-block">
       <div className="first-block-content-container">
-        <h1>{t("mainPage.block5.title")}</h1>
+        <h2>{t("mainPage.block5.title")}</h2>
         <div className="row pt-4 pb-2">
           <div className="col">
             <p>{t("mainPage.block5.mainTextPartOne")}</p>

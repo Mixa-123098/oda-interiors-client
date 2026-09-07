@@ -14,7 +14,7 @@ const IdeologyTemplate = ({ header, text1, text2 }) => {
     <>
       <div className="first-block about-hero-block pt-4">
         <div className="first-block-content-container align-items-center">
-          <h1 className="text-center">{header}</h1>
+          <h2 className="text-center">{header}</h2>
           <div className="row mt-4 pt-4 pb-2 justify-content-center">
             <div className="col-md-4 col">
               <p>{text1}</p>
@@ -84,9 +84,9 @@ const OurTeam = () => {
   ];
   return (
     <section className="about-section">
-      <h1 className="text-center about-section-title">
+      <h2 className="text-center about-section-title">
         {t("aboutPage.block2.title")}
-      </h1>
+      </h2>
       <div className="row justify-content-center">
         {imgesList.map((person, index) => (
           <div key={index} className="col-lg-3 col-md-4 col-sm-6 mb-4">
@@ -112,9 +112,9 @@ const Cinnosty = () => {
 
   return (
     <section className="values-section">
-      <h1 className="text-center values-title">
+      <h2 className="text-center values-title">
         {t("aboutPage.block4.ourValues")}
-      </h1>
+      </h2>
 
       <div className="row g-4 justify-content-center pt-4 pb-2">
         {valuesList &&
