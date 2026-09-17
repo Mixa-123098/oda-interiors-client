@@ -234,6 +234,21 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
               </label>
             </div>
           </div>
+          <button
+            type="button"
+            className="btn btn-link btn-sm p-0 mb-2 d-block"
+            onClick={() =>
+              setApplyLangs((prev) =>
+                prev.size === otherLanguages.length
+                  ? new Set()
+                  : new Set(otherLanguages.map((lang) => lang.code))
+              )
+            }
+          >
+            {applyLangs.size === otherLanguages.length
+              ? "Зняти всі мови"
+              : "Обрати всі мови"}
+          </button>
           {otherLanguages.map((lang) => (
             <div className="form-check form-check-inline" key={lang.code}>
               <input
