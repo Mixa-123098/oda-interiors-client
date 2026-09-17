@@ -42,6 +42,8 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("idle"); // idle | loading | saving | success | error
   const [applyLangs, setApplyLangs] = useState(new Set()); // other language codes to also update
+  const [applyMode, setApplyMode] = useState("copy"); // copy | translate - how to apply to applyLangs
+  const [failedLangs, setFailedLangs] = useState([]); // langs whose AI translation failed on last save
 
   useEffect(() => {
     setStatus("loading");
@@ -88,6 +90,7 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
 
   const handleSave = async () => {
     setStatus("saving");
+    setFailedLangs([]);
     try {
       const response = await fetch(
         `${API_URL}/languages/${langCode}/translations`,
@@ -113,10 +116,14 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
                 value: entries[path],
               })),
               langs: Array.from(applyLangs),
+              sourceLang: langCode,
+              mode: applyMode,
             }),
           }
         );
         if (!bulkResponse.ok) throw new Error("bulk_save_failed");
+        const bulkResult = await bulkResponse.json();
+        setFailedLangs(bulkResult.failedLangs || []);
       }
 
       setOriginalEntries(entries);
@@ -163,6 +170,11 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
           Не вдалося зберегти
         </div>
       )}
+      {status === "success" && failedLangs.length > 0 && (
+        <div className="alert alert-warning py-1 small" role="alert">
+          Не вдалося перекласти: {failedLangs.map((l) => l.toUpperCase()).join(", ")}
+        </div>
+      )}
 
       <div className="d-flex align-items-center gap-2 mb-2">
         <input
@@ -192,8 +204,35 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
       {changedPaths.length > 0 && otherLanguages.length > 0 && (
         <div className="border rounded p-2 mb-2 bg-light">
           <div className="small text-muted mb-1">
-            Змінено {changedPaths.length} ключ(ів). Застосувати ті самі значення
-            і до інших мов:
+            Змінено {changedPaths.length} ключ(ів). Застосувати до інших мов:
+          </div>
+          <div className="d-flex gap-3 mb-2">
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="apply-mode-copy"
+                name="apply-mode"
+                checked={applyMode === "copy"}
+                onChange={() => setApplyMode("copy")}
+              />
+              <label className="form-check-label" htmlFor="apply-mode-copy">
+                Скопіювати як є
+              </label>
+            </div>
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="apply-mode-translate"
+                name="apply-mode"
+                checked={applyMode === "translate"}
+                onChange={() => setApplyMode("translate")}
+              />
+              <label className="form-check-label" htmlFor="apply-mode-translate">
+                Перекласти через AI
+              </label>
+            </div>
           </div>
           {otherLanguages.map((lang) => (
             <div className="form-check form-check-inline" key={lang.code}>
