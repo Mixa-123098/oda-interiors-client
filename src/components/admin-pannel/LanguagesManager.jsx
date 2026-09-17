@@ -276,7 +276,10 @@ const LanguagesManager = () => {
                 {editingLang === lang.code && (
                   <tr>
                     <td colSpan={3}>
-                      <TranslationsEditor langCode={lang.code} />
+                      <TranslationsEditor
+                        langCode={lang.code}
+                        otherLanguages={languages.filter((l) => l.code !== lang.code)}
+                      />
                     </td>
                   </tr>
                 )}
