@@ -1,0 +1,160 @@
+.featured {
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(4rem, 9vw, 8rem);
+  background: #fff;
+}
+
+.featured-inner {
+  width: min(1240px, 100% - 3rem);
+  margin: 0 auto;
+}
+
+/* Heading and "All projects" sit on the outer edges of the photo grid, so the
+   block reads as one wide gallery (the text sections above stay a narrow column). */
+.featured-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.featured-head h2 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
+  letter-spacing: -0.02em;
+}
+
+.featured-all {
+  position: relative;
+  padding-bottom: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #111;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.featured-all::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.35);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.featured-all:hover::after {
+  transform: scaleX(1);
+}
+
+/* 12-col editorial grid: wide + narrow, then narrow + wide */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem) clamp(1rem, 2vw, 2rem);
+  align-items: start;
+}
+
+.featured-card {
+  display: block;
+  color: #111;
+  text-decoration: none;
+}
+
+.featured-card--a {
+  grid-column: span 7;
+}
+
+.featured-card--b {
+  grid-column: span 5;
+  margin-top: clamp(0rem, 5vw, 4.5rem);
+}
+
+.featured-card--flip.featured-card--a {
+  grid-column: span 5;
+  margin-top: 0;
+}
+
+.featured-card--flip.featured-card--b {
+  grid-column: span 7;
+  margin-top: clamp(0rem, 5vw, 4.5rem);
+}
+
+.featured-thumb {
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #eee;
+}
+
+.featured-card--b .featured-thumb {
+  aspect-ratio: 4 / 5;
+}
+
+.featured-card--flip.featured-card--a .featured-thumb {
+  aspect-ratio: 4 / 5;
+}
+
+.featured-card--flip.featured-card--b .featured-thumb {
+  aspect-ratio: 4 / 3;
+}
+
+.featured-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.featured-card:hover .featured-thumb img {
+  transform: scale(1.045);
+}
+
+.featured-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-top: 1rem;
+}
+
+.featured-caption h3 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  font-weight: 400;
+}
+
+.featured-caption span {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6f6f6f;
+}
+
+@media (max-width: 800px) {
+  .featured-card,
+  .featured-card--flip.featured-card--a,
+  .featured-card--flip.featured-card--b {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .featured-card .featured-thumb,
+  .featured-card--flip.featured-card--a .featured-thumb,
+  .featured-card--flip.featured-card--b .featured-thumb {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-thumb img,
+  .featured-all::after {
+    transition: none;
+  }
+}

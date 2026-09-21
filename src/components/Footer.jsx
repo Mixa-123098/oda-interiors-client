@@ -1,29 +1,66 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import ScrollToTop from "../custom-hooks/ScrollToTop";
+import "./Footer.css";
 
-const Footer = ({ settings }) => {
-  const { color, bgColor } = settings || {};
-  const resolvedColor = color || "white";
-  const resolvedBgColor = bgColor || "#5c5c5c";
-  const { t, i18n } = useTranslation();
+// The map (library + tiles + fonts, ~0.5MB) is fetched only once the footer
+// nears the viewport, so it never competes with the page content for a slow
+// connection.
+const LazyProjectsMap = (props) => {
+  const holder = useRef(null);
+  const [near, setNear] = useState(false);
 
-  const mapLanguages = { ua: "uk", en: "en", sk: "sk" };
-  const mapLang = mapLanguages[i18n.language] || "en";
+  useEffect(() => {
+    const node = holder.current;
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return undefined;
+    }
+    let timer;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          io.disconnect();
+          // Short pages (e.g. a list that is still loading) have the footer
+          // in view immediately; give the real content a head start.
+          timer = setTimeout(() => setNear(true), 1500);
+        }
+      },
+      { rootMargin: "400px 0px" }
+    );
+    io.observe(node);
+    return () => {
+      io.disconnect();
+      clearTimeout(timer);
+    };
+  }, []);
 
-  const cities = [
-    { key: "kyiv", label: t("footer.cities.kyiv"), query: "Kyiv, Ukraine" },
-    {
-      key: "dnipro",
-      label: t("footer.cities.dnipro"),
-      query: "Dnipro, Ukraine",
-    },
-  ];
-  const [activeCity, setActiveCity] = useState(cities[0].key);
-  const selectedCity =
-    cities.find((city) => city.key === activeCity) || cities[0];
+  return (
+    <div ref={holder} style={{ minHeight: props.height }}>
+      {near && (
+        <Suspense fallback={<div style={{ height: props.height }} />}>
+          <ProjectsMap {...props} />
+        </Suspense>
+      )}
+    </div>
+  );
+};
+
+// Map library is ~0.8MB: keep it out of the main bundle, load it with the footer.
+const ProjectsMap = lazy(() => import("./ProjectsMap"));
+
+const LIGHT_BACKGROUNDS = ["white", "#fff", "#ffffff"];
+
+// hideMap: the /map page already shows the full map, so no second copy there.
+const Footer = ({ settings, hideMap = false }) => {
+  const { bgColor } = settings || {};
+  const isLight = LIGHT_BACKGROUNDS.includes((bgColor || "").toLowerCase());
+  const { t } = useTranslation();
 
   const contactInfo = {
     phone: "+380 67 639 70 18",
+    phoneHref: "tel:+380676397018",
     email: "marynaprokhorova@gmail.com",
   };
 
@@ -52,116 +89,76 @@ const Footer = ({ settings }) => {
   ];
 
   return (
-    <div
-      style={{
-        boxShadow: `0 -1px 20px 1px rgba(0, 0, 0, 0.75)`,
-        width: "100%",
-      }}
+    <footer
+      className={`site-footer ${
+        isLight ? "site-footer--light" : "site-footer--dark"
+      }`}
     >
-      <footer
-        style={{
-          backgroundColor: bgColor || "#5c5c5c",
-          color: color || "white",
-          padding: "30px 0",
-        }}
-      >
-        <div className="container">
-          <div className="row justify-content-between mb-4">
-            <div className="col-md-4">
-              <h4>{t("footer.contacts.title")}</h4>
-              <p>
-                <b>{t("footer.contacts.phone")}:</b> {contactInfo.phone}
-              </p>
-              <p>
-                <b>{t("footer.contacts.email")}:</b> {contactInfo.email}
-              </p>
+      <div className="container">
+        <div className="site-footer-grid">
+          <div>
+            <h4 className="site-footer-title">{t("footer.contacts.title")}</h4>
+            <div className="site-footer-item">
+              <span className="site-footer-label">
+                {t("footer.contacts.phone")}
+              </span>
+              <a href={contactInfo.phoneHref}>{contactInfo.phone}</a>
             </div>
-            <div className="col-md-4">
-              <h4>{t("footer.social_media.title")}</h4>
-              <ul className="list-unstyled">
-                {socialMediaLinks.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-decoration-none footer-social-link"
-                      style={{ color: color || "white" }}
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="col-md-4">
-              <h4>{t("footer.working_hours.title")}</h4>
-              <ul className="list-unstyled">
-                {businessHours.map((item, index) => (
-                  <li key={index}>
-                    <span>{item.day}:</span> <b>{item.hours}</b>
-                  </li>
-                ))}
-              </ul>
+            <div className="site-footer-item">
+              <span className="site-footer-label">
+                {t("footer.contacts.email")}
+              </span>
+              <a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a>
             </div>
           </div>
 
-          <div className="row justify-content-center mb-4">
-            <div className="col-md-6">
-              <h4>{t("footer.map")}</h4>
-              <div className="mb-2" role="tablist">
-                {cities.map((city) => {
-                  const isActive = city.key === activeCity;
-                  return (
-                    <button
-                      key={city.key}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => setActiveCity(city.key)}
-                      style={{
-                        marginRight: "8px",
-                        padding: "4px 14px",
-                        borderRadius: "999px",
-                        border: `1px solid ${resolvedColor}`,
-                        backgroundColor: isActive
-                          ? resolvedColor
-                          : "transparent",
-                        color: isActive ? resolvedBgColor : resolvedColor,
-                        cursor: "pointer",
-                        transition: "background-color 0.15s ease",
-                      }}
-                    >
-                      {city.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <iframe
-                key={selectedCity.key}
-                title={`Location Map - ${selectedCity.label}`}
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                  selectedCity.query
-                )}&output=embed&hl=${mapLang}`}
-                width="100%"
-                height="200"
-                style={{ border: "0", borderRadius: "6px" }}
-                allowFullScreen=""
-                loading="lazy"
-              ></iframe>
-            </div>
+          <div>
+            <h4 className="site-footer-title">
+              {t("footer.social_media.title")}
+            </h4>
+            <ul className="site-footer-list">
+              {socialMediaLinks.map((link, index) => (
+                <li key={index}>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="row">
-            <div className="col-12 text-center">
-              <p>
-                &copy; {new Date().getFullYear()} {t("footer.copyright")}
-              </p>
-            </div>
+          <div>
+            <h4 className="site-footer-title">
+              {t("footer.working_hours.title")}
+            </h4>
+            <ul className="site-footer-list site-footer-hours">
+              {businessHours.map((item, index) => (
+                <li key={index}>
+                  <span>{item.day}</span>
+                  <b>{item.hours}</b>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </footer>
-    </div>
+
+        {!hideMap && (
+        <div className="site-footer-map">
+          <div className="site-footer-map-head">
+            <h4 className="site-footer-title mb-0">{t("footer.map")}</h4>
+            <Link className="site-footer-maplink" to="/map" onClick={ScrollToTop}>
+              {t("footer.mapAll")}
+            </Link>
+          </div>
+          <LazyProjectsMap variant={isLight ? "light" : "dark"} height={340} />
+        </div>
+        )}
+
+        <div className="site-footer-bottom">
+          &copy; {new Date().getFullYear()} {t("footer.copyright")}
+        </div>
+      </div>
+    </footer>
   );
 };
 

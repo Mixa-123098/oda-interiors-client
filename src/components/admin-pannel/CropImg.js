@@ -1,7 +1,6 @@
-import React, { useState, useEffect, createRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
-import "./Crop.css";
 import fileStore from "../../store/cropImgStore";
 import { useTranslation } from "react-i18next";
 
@@ -11,7 +10,7 @@ const CropImg = ({ fileDataUrl, handleFileChange }) => {
   const image = fileDataUrl;
 
   const [cropData, setCropData] = useState("#");
-  const cropperRef = createRef();
+  const cropperRef = useRef(null);
 
   // Cropper.js measures its container's size once, when it initializes —
   // if that happens while the Bootstrap modal is still mid fade-in

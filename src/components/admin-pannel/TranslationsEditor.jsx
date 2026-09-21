@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { API_URL } from "../../config/api";
 
 // Nested translation JSON (editPage.usersList.resetPassword: "...") is
@@ -37,6 +38,7 @@ const unflatten = (flat) => {
 };
 
 const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
+  const { t } = useTranslation();
   const [entries, setEntries] = useState(null); // { path: value } | null while loading
   const [originalEntries, setOriginalEntries] = useState(null); // snapshot as loaded, used to detect what changed
   const [search, setSearch] = useState("");
@@ -155,24 +157,26 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
   }, [entries, search, changedPathSet]);
 
   if (status === "loading" || !entries) {
-    return <p>Завантаження...</p>;
+    return <p>{t("editPage.languages.translationsEditor.loading")}</p>;
   }
 
   return (
     <div className="border rounded p-3 mt-2">
       {status === "success" && (
         <div className="alert alert-success py-1 small" role="alert">
-          Збережено
+          {t("editPage.languages.translationsEditor.saveSuccess")}
         </div>
       )}
       {status === "error" && (
         <div className="alert alert-danger py-1 small" role="alert">
-          Не вдалося зберегти
+          {t("editPage.languages.translationsEditor.saveError")}
         </div>
       )}
       {status === "success" && failedLangs.length > 0 && (
         <div className="alert alert-warning py-1 small" role="alert">
-          Не вдалося перекласти: {failedLangs.map((l) => l.toUpperCase()).join(", ")}
+          {t("editPage.languages.translationsEditor.translateFailed", {
+            langs: failedLangs.map((l) => l.toUpperCase()).join(", "),
+          })}
         </div>
       )}
 
@@ -180,7 +184,9 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
         <input
           type="text"
           className="form-control"
-          placeholder="Пошук за ключем або текстом..."
+          placeholder={t(
+            "editPage.languages.translationsEditor.searchPlaceholder"
+          )}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -197,14 +203,16 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
               aria-hidden="true"
             ></span>
           )}
-          Зберегти переклади
+          {t("editPage.languages.translationsEditor.save")}
         </button>
       </div>
 
       {changedPaths.length > 0 && otherLanguages.length > 0 && (
         <div className="border rounded p-2 mb-2 bg-light">
           <div className="small text-muted mb-1">
-            Змінено {changedPaths.length} ключ(ів). Застосувати до інших мов:
+            {t("editPage.languages.translationsEditor.changedCount", {
+              count: changedPaths.length,
+            })}
           </div>
           <div className="d-flex gap-3 mb-2">
             <div className="form-check">
@@ -217,7 +225,7 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
                 onChange={() => setApplyMode("copy")}
               />
               <label className="form-check-label" htmlFor="apply-mode-copy">
-                Скопіювати як є
+                {t("editPage.languages.translationsEditor.modeCopy")}
               </label>
             </div>
             <div className="form-check">
@@ -230,7 +238,7 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
                 onChange={() => setApplyMode("translate")}
               />
               <label className="form-check-label" htmlFor="apply-mode-translate">
-                Перекласти через AI
+                {t("editPage.languages.translationsEditor.modeTranslate")}
               </label>
             </div>
           </div>
@@ -246,8 +254,8 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
             }
           >
             {applyLangs.size === otherLanguages.length
-              ? "Зняти всі мови"
-              : "Обрати всі мови"}
+              ? t("editPage.languages.translationsEditor.deselectAll")
+              : t("editPage.languages.translationsEditor.selectAll")}
           </button>
           {otherLanguages.map((lang) => (
             <div className="form-check form-check-inline" key={lang.code}>
@@ -270,7 +278,10 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
       )}
 
       <div className="text-muted small mb-2">
-        {filteredPaths.length} з {Object.keys(entries).length} рядків
+        {t("editPage.languages.translationsEditor.rowsCount", {
+          filtered: filteredPaths.length,
+          total: Object.keys(entries).length,
+        })}
       </div>
 
       <div style={{ maxHeight: 400, overflowY: "auto" }}>
@@ -298,7 +309,9 @@ const TranslationsEditor = ({ langCode, otherLanguages = [] }) => {
           </div>
         ))}
         {filteredPaths.length === 0 && (
-          <p className="text-muted">Нічого не знайдено</p>
+          <p className="text-muted">
+            {t("editPage.languages.translationsEditor.noResults")}
+          </p>
         )}
       </div>
     </div>

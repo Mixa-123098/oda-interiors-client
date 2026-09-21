@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { API_URL } from "../../config/api";
 import languagesStore from "../../store/languagesStore";
 import TranslationsEditor from "./TranslationsEditor";
 
 const LanguagesManager = () => {
+  const { t } = useTranslation();
   const [languages, setLanguages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -37,12 +39,12 @@ const LanguagesManager = () => {
 
     if (!/^[a-z]{2,3}$/.test(trimmedCode)) {
       setStatus("error");
-      setErrorMessage("Код мови має бути з 2-3 латинських літер, напр. \"pl\"");
+      setErrorMessage(t("editPage.languages.invalidCode"));
       return;
     }
     if (!trimmedName) {
       setStatus("error");
-      setErrorMessage("Вкажіть назву мови");
+      setErrorMessage(t("editPage.languages.missingName"));
       return;
     }
 
@@ -70,9 +72,11 @@ const LanguagesManager = () => {
       setCode("");
       if (data.failed_project_ids && data.failed_project_ids.length > 0) {
         setErrorMessage(
-          `Увага: ${data.projects_translated}/${data.projects_total} проєктів перекладено. ` +
-            `Не вдалося перекласти проєкт(и) з ID: ${data.failed_project_ids.join(", ")} — ` +
-            `спробуйте кнопку "Перекласти" на вкладці редагування проєкту.`
+          t("editPage.languages.backfillWarning", {
+            translated: data.projects_translated,
+            total: data.projects_total,
+            ids: data.failed_project_ids.join(", "),
+          })
         );
       }
       loadLanguages();
@@ -82,14 +86,14 @@ const LanguagesManager = () => {
       setStatus("error");
       setErrorMessage(
         error.message === "language_exists"
-          ? "Ця мова вже додана"
-          : "Не вдалося додати мову. Спробуйте ще раз."
+          ? t("editPage.languages.languageExists")
+          : t("editPage.languages.addFailed")
       );
     }
   };
 
   const handleDelete = async (langCode) => {
-    if (!window.confirm(`Видалити мову "${langCode}" разом з усіма її перекладами?`)) {
+    if (!window.confirm(t("editPage.languages.deleteConfirm", { code: langCode }))) {
       return;
     }
     try {
@@ -107,8 +111,8 @@ const LanguagesManager = () => {
       console.error("Error deleting language:", error);
       alert(
         error.message === "cannot_delete_last_language"
-          ? "Не можна видалити останню мову сайту"
-          : "Не вдалося видалити мову"
+          ? t("editPage.languages.cannotDeleteLast")
+          : t("editPage.languages.deleteFailed")
       );
     }
   };
@@ -133,12 +137,12 @@ const LanguagesManager = () => {
 
     if (!/^[a-z]{2,3}$/.test(trimmedCode)) {
       setMetaStatus("error");
-      setMetaError("Код мови має бути з 2-3 латинських літер, напр. \"pl\"");
+      setMetaError(t("editPage.languages.invalidCode"));
       return;
     }
     if (!trimmedName) {
       setMetaStatus("error");
-      setMetaError("Вкажіть назву мови");
+      setMetaError(t("editPage.languages.missingName"));
       return;
     }
 
@@ -166,24 +170,24 @@ const LanguagesManager = () => {
       setMetaStatus("error");
       setMetaError(
         error.message === "language_exists"
-          ? "Мова з таким кодом вже існує"
-          : "Не вдалося зберегти зміни. Спробуйте ще раз."
+          ? t("editPage.languages.codeExists")
+          : t("editPage.languages.saveMetaFailed")
       );
     }
   };
 
   return (
     <div className="container">
-      <h2 className="mb-4">Мови сайту</h2>
+      <h2 className="mb-4">{t("editPage.languages.title")}</h2>
 
       {loading ? (
-        <p>Завантаження...</p>
+        <p>{t("editPage.languages.loading")}</p>
       ) : (
         <table className="table">
           <thead>
             <tr>
-              <th>Код</th>
-              <th>Назва</th>
+              <th>{t("editPage.languages.code")}</th>
+              <th>{t("editPage.languages.name")}</th>
               <th></th>
             </tr>
           </thead>
@@ -219,15 +223,15 @@ const LanguagesManager = () => {
                           disabled={metaStatus === "submitting"}
                         >
                           {metaStatus === "submitting"
-                            ? "Збереження..."
-                            : "Зберегти"}
+                            ? t("editPage.languages.saving")
+                            : t("editPage.languages.save")}
                         </button>
                         <button
                           className="btn btn-outline-secondary btn-sm"
                           onClick={cancelEditingMeta}
                           disabled={metaStatus === "submitting"}
                         >
-                          Скасувати
+                          {t("editPage.languages.cancel")}
                         </button>
                       </td>
                     </>
@@ -240,7 +244,7 @@ const LanguagesManager = () => {
                           className="btn btn-outline-dark btn-sm"
                           onClick={() => startEditingMeta(lang)}
                         >
-                          Редагувати
+                          {t("editPage.languages.edit")}
                         </button>
                         <button
                           className="btn btn-outline-dark btn-sm"
@@ -251,14 +255,14 @@ const LanguagesManager = () => {
                           }
                         >
                           {editingLang === lang.code
-                            ? "Закрити"
-                            : "Редагувати переклади"}
+                            ? t("editPage.languages.close")
+                            : t("editPage.languages.editTranslations")}
                         </button>
                         <button
                           className="btn btn-outline-danger btn-sm"
                           onClick={() => handleDelete(lang.code)}
                         >
-                          Видалити
+                          {t("editPage.languages.delete")}
                         </button>
                       </td>
                     </>
@@ -289,15 +293,12 @@ const LanguagesManager = () => {
         </table>
       )}
 
-      <h4 className="mt-5">Додати нову мову</h4>
-      <p className="text-muted small">
-        Весь текст сайту та всі вже створені проєкти будуть автоматично
-        перекладені через AI. Це може зайняти хвилину-дві.
-      </p>
+      <h4 className="mt-5">{t("editPage.languages.addNew")}</h4>
+      <p className="text-muted small">{t("editPage.languages.addNewHint")}</p>
 
       {status === "success" && (
         <div className="alert alert-success" role="alert">
-          Мову додано та перекладено!
+          {t("editPage.languages.addSuccess")}
         </div>
       )}
       {status === "success" && errorMessage && (
@@ -316,7 +317,7 @@ const LanguagesManager = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Назва (напр. Polish)"
+            placeholder={t("editPage.languages.namePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={status === "submitting"}
@@ -326,7 +327,7 @@ const LanguagesManager = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Код (напр. pl)"
+            placeholder={t("editPage.languages.codePlaceholder")}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             disabled={status === "submitting"}
@@ -346,7 +347,9 @@ const LanguagesManager = () => {
                 aria-hidden="true"
               ></span>
             )}
-            {status === "submitting" ? "Перекладаємо..." : "Додати мову"}
+            {status === "submitting"
+              ? t("editPage.languages.translating")
+              : t("editPage.languages.addSubmit")}
           </button>
         </div>
       </form>

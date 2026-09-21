@@ -1,3 +1,6 @@
+import ResponsiveImg from "../../ResponsiveImg";
+import ScrollHint from "../../ScrollHint";
+import Lightbox from "../../Lightbox";
 import React from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -40,16 +43,16 @@ const ProjectHeader = ({ dataList, parallaxOffset }) => {
           </div>
         </div>
 
-        <img
-          src={`/img/main_imges_folder/${
-            dataList && dataList.project_header_img
-          }`}
-          // src={`/img/projects_img/preview/${
-          //   dataList && dataList.project_header_img
-          // }`}
+        <ResponsiveImg
+          file={dataList && dataList.project_header_img}
           style={{ transform: `translateY(${parallaxOffset}px)` }}
           alt={dataList?.project_name || ""}
+          // object-fit:cover in a 100vh box: on a portrait phone the photo is
+          // scaled by HEIGHT, so it needs ~1.8x the viewport height in pixels.
+          sizes="max(100vw, 180vh)"
+          priority
         />
+        <ScrollHint />
       </div>
     </>
   );
@@ -168,6 +171,10 @@ const ProjectArticlePlanning = ({ id, translation }) => {
   const { t } = useTranslation();
 
   const [blueprints, setBlueprint] = useState();
+  // The floor plan is the one image people actually want to inspect, so it
+  // opens in the same viewer as the gallery - as a set of one, which hides the
+  // arrows and the counter.
+  const [planOpen, setPlanOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/blueprints`, { credentials: "include" })
@@ -180,11 +187,23 @@ const ProjectArticlePlanning = ({ id, translation }) => {
     <>
       <div className="d-flex  container-lg  justify-content-around planning-adaptation">
         <div className="col-md-6 col-sm-8 d-flex  justify-content-center">
-          <img
-            src={`/img/main_imges_folder/${blueprints && blueprints.img}`}
-            alt="planning"
-            className="planning-img"
-          />
+          {blueprints && blueprints.img && (
+            <button
+              type="button"
+              className="planning-zoom"
+              onClick={() => setPlanOpen(true)}
+              aria-label={t("gallery.openPlan", {
+                defaultValue: "Open the floor plan",
+              })}
+            >
+              <ResponsiveImg
+                file={blueprints.img}
+                alt={t("projects.blueprintDescription")}
+                className="planning-img"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </button>
+          )}
         </div>
 
         <div className="col-md-6 col-sm-8 planning-text">
@@ -203,12 +222,32 @@ const ProjectArticlePlanning = ({ id, translation }) => {
           </div>
         </div>
       </div>
+
+      <Lightbox
+        items={
+          blueprints && blueprints.img
+            ? [
+                {
+                  id: blueprints.id,
+                  img: blueprints.img,
+                  alt: t("projects.blueprintDescription"),
+                },
+              ]
+            : []
+        }
+        index={planOpen ? 0 : null}
+        onClose={() => setPlanOpen(false)}
+        onIndex={() => {}}
+      />
     </>
   );
 };
 
 const ProjectArticleImges = ({ id, name }) => {
+  const { t } = useTranslation();
   const [projectImges, setProjectImges] = useState([]);
+  // Index of the photo shown fullscreen, or null when the viewer is closed.
+  const [openAt, setOpenAt] = useState(null);
 
   useEffect(() => {
     fetch(`${API_URL}/project_imges`, { credentials: "include" })
@@ -223,25 +262,49 @@ const ProjectArticleImges = ({ id, name }) => {
       );
   }, [id]);
 
-  const imges =
-    projectImges &&
-    projectImges.map((element) => (
-      <div
-        key={element.id}
-        className="col-lg-5 col-sm-6  p-lg-3 p-2 d-flex justify-content-center"
-      >
-        <img
-          src={`/img/main_imges_folder/${element.img}`}
-          alt={name || "planning"}
-          className="planning-img"
-        />
-      </div>
-    ));
+  if (!projectImges.length) return null;
+
+  // One shared 3:4 cell for every photo. The source set is a mix of 3:4 and
+  // 4:3 at ~380-700px, so laying them out at their own sizes left ragged
+  // columns and wide empty gutters; cropping them to one ratio makes the page
+  // read as a designed sheet, and the whole uncropped frame is one tap away.
   return (
     <>
-      <div className="d-flex justify-content-center container project_imges flex-wrap  ">
-        {imges}
-      </div>
+      <section className="project-gallery">
+        <div className="project-gallery-grid">
+          {projectImges.map((element, i) => (
+            <button
+              key={element.id}
+              type="button"
+              className="project-gallery-cell"
+              onClick={() => setOpenAt(i)}
+              aria-label={t("gallery.open", {
+                defaultValue: "Open photo {{n}} of {{total}}",
+                n: i + 1,
+                total: projectImges.length,
+              })}
+            >
+              <ResponsiveImg
+                file={element.img}
+                alt={name || ""}
+                className="gallery-img"
+                sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw"
+              />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <Lightbox
+        items={projectImges.map((element) => ({
+          id: element.id,
+          img: element.img,
+          alt: name || "",
+        }))}
+        index={openAt}
+        onClose={() => setOpenAt(null)}
+        onIndex={setOpenAt}
+      />
     </>
   );
 };
@@ -273,8 +336,9 @@ const PrevAndNextProject = ({ id }) => {
           <Link
             to={`/projects/${dataList[prevIndex].id}`}
             onClick={ScrollToTop}
-            className="text-decoration-none text-light"
+            className="pn-link pn-link--prev text-decoration-none text-light"
           >
+            <span className="pn-arrow" aria-hidden="true">←</span>
             <h4>{t("projects.prev")}</h4>
           </Link>
         )}
@@ -282,9 +346,10 @@ const PrevAndNextProject = ({ id }) => {
           <Link
             to={`/projects/${dataList[nextIndex].id}`}
             onClick={ScrollToTop}
-            className="text-decoration-none text-light"
+            className="pn-link pn-link--next text-decoration-none text-light"
           >
             <h4>{t("projects.next")}</h4>
+            <span className="pn-arrow" aria-hidden="true">→</span>
           </Link>
         )}
       </div>
@@ -345,6 +410,11 @@ const ProjectArticle = observer(() => {
   const [notAvailable, setNotAvailable] = useState(false);
   // console.log(dataList);
   const [scrollY, setScrollY] = useState(0);
+  // i18n is a module singleton, so react-hooks can't see i18n.language as a
+  // valid dependency. useTranslation() above re-renders this component on a
+  // language switch, so reading it into a local first is both correct and
+  // lint-clean.
+  const lang = i18n.language;
 
   useEffect(() => {
     let cancelled = false;
@@ -361,7 +431,7 @@ const ProjectArticle = observer(() => {
 
         if (!project) return;
 
-        if (i18n.language === project.source_lang) {
+        if (lang === project.source_lang) {
           setTranslation(null);
           setNotAvailable(false);
           return;
@@ -375,7 +445,7 @@ const ProjectArticle = observer(() => {
           .then((tdata) => {
             if (cancelled) return;
             const row = tdata.find(
-              (r) => r.project_id === parseInt(id) && r.lang === i18n.language
+              (r) => r.project_id === parseInt(id) && r.lang === lang
             );
             setTranslation(row || null);
             setNotAvailable(!row);
@@ -411,7 +481,7 @@ const ProjectArticle = observer(() => {
       cancelled = true;
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [id, i18n.language]);
+  }, [id, lang]);
 
   useEffect(() => {
     if (notAvailable) {

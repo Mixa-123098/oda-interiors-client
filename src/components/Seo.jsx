@@ -3,9 +3,9 @@ import { Helmet } from "react-helmet-async";
 
 const SITE_NAME = "ODA";
 const SITE_URL = "https://oda-interiors.com";
-const DEFAULT_TITLE = `${SITE_NAME} — Interior Design & Architecture Studio in Dnipro and Kyiv, Ukraine`;
+const DEFAULT_TITLE = `${SITE_NAME} — Interior Design & Architecture Studio, Ukraine and Worldwide`;
 const DEFAULT_DESCRIPTION =
-  "ODA is an interior design and architecture studio working in Dnipro and Kyiv, Ukraine. We design apartments, private houses, and public interiors, from concept to finished space.";
+  "ODA is an interior design and architecture studio based in Ukraine and working worldwide. We design apartments, private houses, and public interiors, from concept to finished space.";
 const DEFAULT_IMAGE = `${SITE_URL}/logo512.png`;
 
 const Seo = ({ title, description, image }) => {

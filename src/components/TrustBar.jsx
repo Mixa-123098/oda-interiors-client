@@ -4,7 +4,7 @@ import "./TrustBar.css";
 
 // Trust strip on the home page — a few honest credibility signals right before
 // the closing call-to-action. Values come from the studio's real profile
-// (20+ years, works in Kyiv & Dnipro, full-cycle concept→implementation).
+// (20+ years, works worldwide, full-cycle concept→implementation).
 const TrustBar = () => {
   const { t } = useTranslation();
   const items = [

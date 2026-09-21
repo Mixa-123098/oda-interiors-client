@@ -1,12 +1,89 @@
+/* The old file had a bare global `label { width: 10vw }` that leaked onto every
+   <label> in the app (admin forms included); everything is scoped now. */
 .reg-auth {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    height: 100vh;
-    padding-top: 25vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
 }
 
-label {
-    width: 10vw;
+.reg-auth .reg-auth-form {
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.reg-auth .reg-auth-title {
+  font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.4rem);
+  letter-spacing: -0.01em;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.reg-auth .reg-auth-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--notMainColor);
+}
+
+.reg-auth .reg-auth-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  padding: 0.7rem 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 0;
+  outline: none;
+  font: inherit;
+  font-size: 1rem;
+  color: #111;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reg-auth .reg-auth-field:focus-visible {
+  /* WCAG 2.4.11: the resting underline is a 1px 25%-black hairline, so a 1px
+     solid one was barely a state change. 2px reads clearly without adding a
+     ring that would fight the underline-only field style. */
+  border-bottom-color: #000;
+  box-shadow: 0 2px 0 0 #000;
+}
+
+.reg-auth .reg-auth-submit {
+  margin-top: 0.5rem;
+  padding: 0.9rem 1.5rem;
+  background: #111;
+  color: #fff;
+  border: 1px solid #111;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.reg-auth .reg-auth-submit:hover {
+  background: transparent;
+  color: #111;
+}
+
+.reg-auth .reg-auth-home {
+  margin-top: 1.5rem;
+  padding: 0.25rem 0;
+  background: none;
+  border: 0;
+  align-self: center;
+  color: var(--notMainColor);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.reg-auth .reg-auth-home:hover {
+  color: #111;
+  border-bottom-color: #111;
 }

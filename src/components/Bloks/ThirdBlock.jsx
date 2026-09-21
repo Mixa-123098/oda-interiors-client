@@ -1,5 +1,4 @@
 import React from "react";
-import "./ThirdBlock.css";
 
 const ThirdBlock = () => {
   return (

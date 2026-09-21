@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import DragAndDropImges from "./DragAndDropImges";
+import ProjectLocationPicker from "./ProjectLocationPicker";
 import useFileUpload from "../../custom-hooks/useFileUpload";
 import { API_URL } from "../../config/api";
 
@@ -320,6 +321,8 @@ const ProjectEditor = ({ project, onSaved, onClose }) => {
           />
         </div>
       </div>
+
+      <ProjectLocationPicker project={project} />
 
       <DragAndDropImges
         project_id={project.id}

@@ -1,52 +1,64 @@
+/* Text sections on the home page (FirstBlok/ForthBlock/FifthBlock/SixBlock).
+   These used to be a min-height:100vh box (125vh on phones) with the content
+   absolutely centred via top/left:50% + translate - so each short section was
+   a screen or more of mostly empty space, and the page ran to ~18 phone
+   screens. Now a normal-flow flex section sized by its content plus generous
+   padding, so it still breathes but doesn't waste a viewport. */
 .first-block {
-    position: relative;
-    min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: clamp(4rem, 9vw, 8rem) 1.5rem;
 }
 
 .bg-color {
-    background-color: var(--notMainDarkColor);
+  background-color: var(--notMainDarkColor);
 }
 
 .first-block-content-container {
-    position: absolute;
-    width: 50vw;
+  width: min(920px, 100%);
+}
 
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+.first-block-content-container h1,
+.first-block-content-container h2 {
+  font-size: clamp(1.9rem, 1.3rem + 2vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.first-block-content-container p {
+  font-size: 1.05rem;
+  line-height: 1.7;
 }
 
 .first-block-button {
-    text-transform: uppercase;
-    width: max(250px, 20vw);
-    height: 50px;
-    border: 1px solid black !important;
-    background-color: #fff;
+  text-transform: uppercase;
+  width: max(250px, 20vw);
+  height: 50px;
+  border: 1px solid black !important;
+  background-color: #fff;
 }
 
 .first-block-button-invert {
-    text-transform: uppercase;
-    width: max(250px, 20vw);
-    height: 50px;
-    border: 1px solid rgb(255, 255, 255) !important;
-    background-color: var(--notMainColor);
-}
-
-@media screen and (max-width:999px) {
-    .first-block-content-container {
-        width: 75vw;
-    }
-}
-
-@media screen and (max-width:400px) {
-    .first-block {
-        height: 125vh;
-    }
+  text-transform: uppercase;
+  width: max(250px, 20vw);
+  height: 50px;
+  border: 1px solid rgb(255, 255, 255) !important;
+  background-color: var(--notMainColor);
 }
 
 @media screen and (max-width:555px) {
-    .first-block .row {
-        flex-direction: column;
-        /* Кастыль, поэтому могут быть баги */
-    }
+  .first-block .row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Intro under the hero: sits right above the project grid, so no full-height
+   section - just enough air to read as a statement. */
+.first-block--intro {
+  min-height: 0;
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
 }

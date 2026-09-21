@@ -11,86 +11,172 @@
 
 
 .projects-nav {
-    display: flex;
-    justify-content: center;
-    /* background: var(--mainBgColor); */
-    margin-top: 5vw;
-    /* margin-top: 2.5vw; */
-    margin-bottom: 1.5vw;
+  display: flex;
+  justify-content: center;
+  /* background: var(--mainBgColor); */
+  /* was 5vw: a big empty band between the page title and the tabs */
+  margin-top: clamp(0.5rem, 1.5vw, 1.25rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
+/* Text tabs with an underline on the active one instead of a filled Bootstrap-
+   style pill - quieter, and reads as navigation rather than a button group. */
 .projects-nav-button {
-    font-size: var(--fontSizeTwo);
-    /* font-size: 1.25rem; */
-    background: none;
-    border: 1px solid transparent;
-    border-radius: 999px;
-    padding: 8px 18px;
-    color: var(--notMainDarkColor);
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  font-size: 1.05rem;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  position: relative;
+  padding: 8px 2px;
+  color: var(--notMainColor);
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+
+/* Same underline as the header links: draws in from the left on hover / focus
+   and stays drawn on the active tab. */
+.projects-nav-button::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.projects-nav-button:hover::after,
+.projects-nav-button:focus-visible::after,
+.projects-nav-button.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .projects-nav-button:hover {
-    cursor: pointer;
-    border-color: var(--mainBgColor);
+  cursor: pointer;
+  color: #111;
 }
 
 .projects-nav-button:not(:first-child) {
-    margin-left: 0.5vw;
+  margin-left: 2.25rem;
 }
 
 .projects-nav-button.active {
-    background: #212529;
-    color: #fff;
+  background: none;
+  color: #111;
 }
 
 
 .projects-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 
 }
 
+/* Editorial mosaic: 12-column grid, pairs alternate wide+narrow / narrow+wide
+   (same rhythm as the home "Selected projects"). */
 .our-projects {
-    display: flex;
-    justify-content: start;
-    /* justify-content: space-between; */
-    flex-wrap: wrap;
-    width: var(--containerWidth);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.75rem, 3.5vw, 3.5rem) clamp(1rem, 2vw, 2rem);
+  align-items: start;
+  /* same side margins as the footer's container, so the page has air at the edges */
+  width: min(1296px, 100% - 3rem);
 }
 
-.our-projects>div {
-    width: 100%;
-
-    max-width: 33%;
-    padding-top: max(0.75vw, 10px);
+.our-projects>div:nth-child(4n+1),
+.our-projects>div:nth-child(4n+4) {
+  grid-column: span 7;
 }
 
+.our-projects>div:nth-child(4n+2),
+.our-projects>div:nth-child(4n+3) {
+  grid-column: span 5;
+}
+
+.our-projects>div:nth-child(4n+1) .project-thumb-wrap,
+.our-projects>div:nth-child(4n+4) .project-thumb-wrap {
+  aspect-ratio: 4 / 3;
+}
+
+.our-projects>div:nth-child(4n+2) .project-thumb-wrap,
+.our-projects>div:nth-child(4n+3) .project-thumb-wrap {
+  aspect-ratio: 4 / 5;
+}
+
+/* Second card of each pair sits lower, so the two columns don't end on one line. */
+.our-projects>div:nth-child(2n) {
+  margin-top: clamp(0rem, 4vw, 3.5rem);
+}
+
+.our-projects>div>a {
+  display: block;
+  text-align: left !important;
+}
 
 .project_img {
-    width: 100%;
-    padding: min(0.5vw, 10px);
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .project-thumb-wrap {
-    position: relative;
-    display: inline-block;
-    width: 100%;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Slow, restrained zoom on hover; hover-capable pointers only so touch
+   screens don't get a stuck zoomed state after a tap. */
+@media (hover: hover) {
+  .project-thumb-wrap:hover .project_img {
+    transform: scale(1.03);
+  }
 }
 
 .project-hidden-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 1;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+}
+
+.project_meta {
+  display: block;
+  padding-top: 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--notMainColor);
+}
+
+@media (max-width: 700px) {
+  .our-projects {
+    grid-template-columns: 1fr;
+  }
+  .our-projects>div,
+  .our-projects>div:nth-child(n) {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+  .our-projects>div .project-thumb-wrap {
+    aspect-ratio: 4 / 3 !important;
+  }
 }
 
 .project_name {
-    padding-top: 1vw;
-}
-
-.project_address {
-    padding-top: 1vw;
+  padding-top: 1rem;
+  margin-bottom: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.3rem);
+  letter-spacing: -0.005em;
 }
 
 
@@ -99,11 +185,28 @@
 
 /* Кнопки пагинации */
 .projects-pages-nav>span {
-    width: 15%;
-    max-width: 15%;
-    text-align: center;
+  width: 15%;
+  max-width: 15%;
+  text-align: center;
 }
 
 .active-page {
-    font-weight: bold;
+  font-weight: bold;
+}
+/* Phones: the four tabs don't fit in one row - let the row scroll sideways from the
+   same left edge as the cards instead of cutting the last tab off. */
+@media (max-width: 700px) {
+  .projects-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 0 1.5rem;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .projects-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .projects-nav-button {
+    flex: 0 0 auto;
+  }
 }

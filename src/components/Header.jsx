@@ -3,18 +3,19 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import authStore from "../store/authStore";
-import logo from "../assets/logo-removebg.png";
+import logo from "../assets/logo-header.png";
 import ScrollToTop from "../custom-hooks/ScrollToTop";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "./LanguageSelector";
 
-const Navbar = observer(({ fontColor, scroll, rep }) => {
+const Navbar = observer(({ fontColor, rep }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated, isStaff } = authStore;
   const navbarItemsList = [
     t("navbar.mainPage"),
     t("navbar.projectsPage"),
+    t("navbar.mapPage"),
     t("navbar.aboutPage"),
     t("navbar.contactsPage"),
     t("navbar.pricesPage"),
@@ -27,6 +28,7 @@ const Navbar = observer(({ fontColor, scroll, rep }) => {
     navbarItemsWays.push(
       " ",
       "projects",
+      "map",
       "about",
       "contacts",
       "price",
@@ -37,6 +39,7 @@ const Navbar = observer(({ fontColor, scroll, rep }) => {
     navbarItemsWays.push(
       " ",
       "projects",
+      "map",
       "about",
       "contacts",
       "price",
@@ -75,7 +78,7 @@ const Navbar = observer(({ fontColor, scroll, rep }) => {
     <>
       <nav className="navbar">
         {navbar}
-        <LanguageSelector />
+        <LanguageSelector color={fontColor} />
         {isAuthenticated ? (
           <h6
             onClick={handleLogout}
@@ -91,9 +94,7 @@ const Navbar = observer(({ fontColor, scroll, rep }) => {
         <div className="d-flex align-items-center justify-content-between">
           <input id="menu__toggle" type="checkbox" />
           <label
-            className={
-              scroll === 0 && rep === true ? `menu__btn2` : `menu__btn`
-            }
+            className={rep === true ? `menu__btn2` : `menu__btn`}
             htmlFor="menu__toggle"
           >
             <span></span>
@@ -122,6 +123,7 @@ const Navbar = observer(({ fontColor, scroll, rep }) => {
 
 function Header({ fontColor, invert, rep }) {
   const [scroll, setScroll] = useState(0);
+  const [hidden, setHidden] = useState(false);
   let opacity;
   useEffect(() => {
     // rAF-throttled + passive: the previous handler ran setScroll on every
@@ -130,10 +132,17 @@ function Header({ fontColor, invert, rep }) {
     // the resting position is identical), just coalesced to one update per
     // frame with the listener attached once.
     let ticking = false;
+    let lastY = window.pageYOffset;
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setScroll(window.pageYOffset / 500);
+          const y = window.pageYOffset;
+          // Hide on the way down (desktop only, see CSS), come back on any upward move.
+          if (y < 160) setHidden(false);
+          else if (y > lastY + 4) setHidden(true);
+          else if (y < lastY - 4) setHidden(false);
+          lastY = y;
+          setScroll(y / 500);
           ticking = false;
         });
         ticking = true;
@@ -152,22 +161,41 @@ function Header({ fontColor, invert, rep }) {
     opacity = scroll;
   }
 
+  // Desktop only (CSS): once scrolled, every page gets the same slim light glass bar.
+  const scrolled = scroll > 0.02;
+  const headerClass = [
+    "header",
+    rep && "header--light",
+    scrolled && (rep ? "header--scrolled" : "header--glass"),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="">
-      <div className="smooth-background" style={{ opacity }}></div>
-      <header className="header">
+    <div
+      className={`header-wrap${hidden ? " header-wrap--hidden" : ""}${
+        scrolled && !rep ? " header-wrap--glass" : ""
+      }`}
+      onFocus={() => setHidden(false)}
+    >
+      <div
+        className="smooth-background"
+        style={{ opacity: rep ? 0 : opacity }}
+      ></div>
+      <header className={headerClass}>
         <div className="d-flex align-items-center justify-content-between">
           <Link to="/" onClick={ScrollToTop}>
             <img
               src={logo}
               alt="logo"
               className="header-logo"
-              style={{ filter: scroll === 0 ? invert : `invert(100%)` }}
+              style={{
+                filter: rep || scroll === 0 ? invert : `invert(100%)`,
+              }}
             />
           </Link>
           <Navbar
-            fontColor={scroll === 0 ? fontColor : `white`}
-            scroll={scroll}
+            fontColor={rep || scroll === 0 ? fontColor : `white`}
             rep={rep}
           />
         </div>

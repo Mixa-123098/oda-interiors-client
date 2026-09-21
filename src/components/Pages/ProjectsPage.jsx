@@ -1,5 +1,6 @@
+import ResponsiveImg from "../ResponsiveImg";
 import React from "react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./ProjectsPage.css";
 
@@ -10,10 +11,9 @@ import Footer from "../Footer";
 import Seo from "../Seo";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next"; // i18n для определения языка
-// import axios from "axios";
 import { API_URL } from "../../config/api";
 
-const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations }) => {
+const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, categoryLabels }) => {
   const { t } = useTranslation();
   const startIndex = (focusedPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -34,10 +34,12 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations })
             className="text-center link-style"
           >
             <div className="project-thumb-wrap">
-              <img
-                src={`/img/main_imges_folder/${element.project_img_src}`}
+              <ResponsiveImg
+                file={element.project_img_src}
                 alt={element.project_name || ""}
                 className="project_img "
+                sizes="(max-width: 700px) 100vw, 58vw"
+                eager={index < 2}
               />
               {element.is_hidden && (
                 <span className="badge text-bg-secondary project-hidden-badge">
@@ -53,6 +55,18 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations })
                   ? t(`projects.project${element.id}.name`)
                   : (translation && translation.name) || element.project_name)}
             </h5>
+            {(() => {
+              const city = (translation && translation.city) || element.project_city;
+              const country =
+                (translation && translation.country) || element.project_country;
+              const meta = [
+                categoryLabels[String(element.project_specialization).trim()],
+                [city, country].filter(Boolean).join(", "),
+              ]
+                .filter(Boolean)
+                .join(" · ");
+              return meta ? <span className="project_meta">{meta}</span> : null;
+            })()}
           </Link>
         </div>
       );
@@ -97,6 +111,35 @@ const Projects = ({ indexFromSecBlock }) => {
 
   const itemsPerPage = 9;
 
+  // Paging swaps the cards in place, so without this the visitor is left at
+  // the bottom of the page looking at the pagination row while the new page's
+  // photos sit above them, unseen.
+  const listTopRef = useRef(null);
+  const skipFirstScroll = useRef(true);
+
+  useEffect(() => {
+    if (skipFirstScroll.current) {
+      // Don't yank the page on the initial render.
+      skipFirstScroll.current = false;
+      return;
+    }
+    const el = listTopRef.current;
+    if (!el) return;
+
+    // Measure the fixed header rather than assuming its height: it is 80px on
+    // desktop and 72px below 1000px, and it would otherwise cover the tabs.
+    const header = document.querySelector(".header");
+    const offset = (header ? header.getBoundingClientRect().height : 0) + 16;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+
+    window.scrollTo({
+      top: Math.max(top, 0),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [currentPage]);
+
   const setFocused = (index) => {
     setFocusedIndex(index);
     setCurrentPage(1);
@@ -110,17 +153,22 @@ const Projects = ({ indexFromSecBlock }) => {
   // every render, including a category click or pagination). The Set of
   // translated project ids turns the previous O(projects x translations)
   // nested scan into O(projects); the resulting set of projects is identical.
+  // i18n is a module singleton, so react-hooks can't see i18n.language as a
+  // valid dependency. useTranslation() above re-renders this component on a
+  // language switch, so reading it into a local first is both correct and
+  // lint-clean.
+  const lang = i18n.language;
+
   const availableInLanguage = useMemo(() => {
     const translatedIds = new Set(
       translations
-        .filter((row) => row.lang === i18n.language)
+        .filter((row) => row.lang === lang)
         .map((row) => row.project_id)
     );
     return dataList.filter(
-      (project) =>
-        project.source_lang === i18n.language || translatedIds.has(project.id)
+      (project) => project.source_lang === lang || translatedIds.has(project.id)
     );
-  }, [dataList, translations, i18n.language]);
+  }, [dataList, translations, lang]);
 
   const filteredData = useMemo(
     () =>
@@ -150,7 +198,7 @@ const Projects = ({ indexFromSecBlock }) => {
 
   return (
     <>
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center" ref={listTopRef}>
         <nav className="projects-nav">{categories}</nav>
       </div>
 
@@ -161,6 +209,7 @@ const Projects = ({ indexFromSecBlock }) => {
         filteredData={filteredData}
         dataList={dataList}
         translations={translations}
+        categoryLabels={categoriesList}
       />
       <ProjectsPagesNav
         setFocusedPage={setCurrentPage}
@@ -235,7 +284,7 @@ const ProjectsPage = ({ indexFromSecBlock }) => {
     <div className="projects">
       <Seo
         title="Our Projects"
-        description="Browse ODA's portfolio of apartment, private house, and public interior design projects in Dnipro and Kyiv, Ukraine."
+        description="Browse ODA's portfolio of apartment, private house, and public interior design projects around the world."
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
       <PagesHeader title={t("projectsPage.ourProjects")} />

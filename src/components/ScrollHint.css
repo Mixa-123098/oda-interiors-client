@@ -1,0 +1,103 @@
+/* A 72px hairline arrow, white because it lives on photo/video heroes.
+   Sits above the hero scrim (z-index 2) and below the fixed header (4) -
+   see the z-index legend at the top of App.css. */
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--scroll-hint-bottom, 2rem);
+  z-index: 3;
+  display: block;
+  width: 44px; /* comfortable tap target around the 1px line */
+  height: 92px;
+  padding: 0;
+  transform: translateX(-50%);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+
+.scroll-hint--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* One 2.6s cycle: the shaft starts short and stretches down while the head
+   falls with its tip (both use the same timing, so they stay joined); then the
+   whole arrow drops a little further and fades. */
+.scroll-hint-arrow {
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  color: #fff;
+  overflow: visible;
+  animation: scroll-hint-fall 2.6s cubic-bezier(0.55, 0, 0.25, 1) infinite;
+}
+
+.scroll-hint-shaft {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: scroll-hint-stretch 2.6s cubic-bezier(0.55, 0, 0.25, 1) infinite;
+}
+
+.scroll-hint-head {
+  animation: scroll-hint-head 2.6s cubic-bezier(0.55, 0, 0.25, 1) infinite;
+}
+
+/* Shaft length 70 * scale; head sits at the shaft's tip: 70 * (scale - 1). */
+@keyframes scroll-hint-stretch {
+  0% {
+    transform: scaleY(0.12);
+  }
+  65%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes scroll-hint-head {
+  0% {
+    transform: translateY(-61.5px);
+  }
+  65%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll-hint-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.scroll-hint:hover .scroll-hint-arrow,
+.scroll-hint:hover .scroll-hint-shaft,
+.scroll-hint:hover .scroll-hint-head {
+  animation-duration: 1.7s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint-arrow,
+  .scroll-hint-shaft,
+  .scroll-hint-head {
+    animation: none;
+  }
+}
+
+/* Home hero: keep clear of the slide counter / social bar along the bottom. */
+.main .scroll-hint {
+  --scroll-hint-bottom: 5rem;
+}

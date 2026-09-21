@@ -1,0 +1,67 @@
+.not-found-page .not-found-main {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--headerMinHeight) + 3rem) 1.5rem 4rem;
+  text-align: center;
+}
+
+.not-found-page .not-found-code {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(5rem, 18vw, 11rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(0, 0, 0, 0.12);
+  margin-bottom: 1rem;
+}
+
+.not-found-page .not-found-title {
+  font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.6rem);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+}
+
+.not-found-page .not-found-text {
+  max-width: 32rem;
+  color: var(--notMainColor);
+  margin-bottom: 2.25rem;
+}
+
+.not-found-page .not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.not-found-page .not-found-primary,
+.not-found-page .not-found-secondary {
+  padding: 0.85rem 2rem;
+  border: 1px solid #111;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.not-found-page .not-found-primary {
+  background: #111;
+  color: #fff;
+}
+
+.not-found-page .not-found-primary:hover {
+  background: transparent;
+  color: #111;
+}
+
+.not-found-page .not-found-secondary {
+  color: #111;
+}
+
+.not-found-page .not-found-secondary:hover {
+  background: #111;
+  color: #fff;
+}

@@ -1,64 +1,115 @@
 :root {
-    --project-TextAndSubtext-transform: -50%;
-    --project-TextAndSubtext-bottomPadding: 24vw;
-    /* --project-TextAndSubtext-bottomPadding: 24vw; */
-  }
+  --project-TextAndSubtext-transform: -50%;
+  --project-TextAndSubtext-bottomPadding: 24vw;
+  /* --project-TextAndSubtext-bottomPadding: 24vw; */
+}
 
 /* Позиционирование картинок в блоке */
 .projects-img-left {
-    position: relative;
+  position: relative;
 }
 
 .projects-img-center {
-    position: relative;
+  position: relative;
 
-    left: 50%;
-    transform: translateX(-49.5%);
+  left: 50%;
+  transform: translateX(-49.5%);
 }
 
 .projects-img-right {
-    position: relative;
-    left: 50%;
-    transform: translateX(-82.5%);
+  position: relative;
+  left: 50%;
+  transform: translateX(-82.5%);
 }
 
 /* Затемнение фотографий*/
 .blockOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 56.25vw;
-    background-color: rgba(0, 0, 0, 0.65);
-    z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56.25vw;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: 1;
 }
 
 /* Заголовок и подзаголовок блока */
 
 .projects-text {
-    position: absolute;
-    width: 100%;
+  position: absolute;
+  width: 100%;
 
-    text-align: center;
-    font-size: 2.5vw;
+  text-align: center;
+  font-size: 2.5vw;
 
 
-    bottom: var(--project-TextAndSubtext-bottomPadding);
-    transform: translateY(var(--project-TextAndSubtext-transform));
-    z-index: 2;
-    color: white;
+  bottom: var(--project-TextAndSubtext-bottomPadding);
+  transform: translateY(var(--project-TextAndSubtext-transform));
+  z-index: 2;
+  color: white;
 }
 
 .projects-subtext {
+  position: absolute;
+  width: 100%;
+
+  text-align: center;
+  text-transform: uppercase;
+  transform: translateY(var(--project-TextAndSubtext-transform));
+  font-size: 1vw;
+
+  bottom:calc( var(--project-TextAndSubtext-bottomPadding) - 20px) ;
+  z-index: 2;
+  color: white;
+}
+/* Phones: the desktop layout is a 16:9 panorama sliced into three columns
+   with vw-based text and translateX offsets. Stacked, that left mis-cropped
+   photos (a grey band on the right), tiny captions and a screen of empty
+   space below (min-height on .blocks). Each category becomes a plain tile:
+   photo covers it, caption centred. */
+@media (max-width: 768px) {
+  .blocks-container .blocks {
+    min-height: 0;
+  }
+  .blocks-container .block-element {
+    height: clamp(200px, 56vw, 300px);
+  }
+  .blocks-container .block-container,
+  .blocks-container .block-container > div {
+    display: block;
+    height: 100%;
+  }
+  .blocks-container .block-element img.projects-img {
     position: absolute;
+    inset: 0;
+    left: 0;
+    bottom: auto;
     width: 100%;
-
-    text-align: center;
-    text-transform: uppercase;
-    transform: translateY(var(--project-TextAndSubtext-transform));
-    font-size: 1vw;
-
-    bottom:calc( var(--project-TextAndSubtext-bottomPadding) - 20px) ;
-    z-index: 2;
-    color: white;
+    height: 100%;
+    object-fit: cover;
+    transform: none;
+  }
+  .blocks-container .blockOverlay {
+    height: 100%;
+    width: 100% !important;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .blocks-container .projects-text,
+  .blocks-container .projects-subtext {
+    top: 50%;
+    bottom: auto;
+    margin: 0;
+    padding: 0 1rem;
+  }
+  .blocks-container .projects-text {
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
+    transform: translateY(-100%);
+  }
+  .blocks-container .projects-subtext {
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    transform: none;
+  }
 }

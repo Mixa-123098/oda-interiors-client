@@ -4,12 +4,13 @@ import { Link } from "react-router-dom";
 import ScrollToTop from "../../custom-hooks/ScrollToTop";
 import { useTranslation } from "react-i18next";
 
+// FirstBlock.css also styles the other home text sections (Third/Forth/Fifth/SixBlock),
+// so it must stay imported here.
 const FirstBlok = () => {
   const { t } = useTranslation();
 
   return (
-    // Подогнать форму, чвет, шрифт, отступы
-    <div className="first-block">
+    <div className="first-block first-block--intro">
       <div className="first-block-content-container">
         <h1>
           {t("mainPage.block1.titlePartOne")}

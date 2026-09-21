@@ -6,33 +6,21 @@ import Seo from "../Seo";
 import { Link } from "react-router-dom";
 import ScrollToTop from "../../custom-hooks/ScrollToTop";
 import "../../App.css";
+import "./PricePage.css";
 import { useTranslation } from "react-i18next";
 
-const PriceCard = ({ title, text, price }) => {
+const PriceCard = ({ title, price }) => {
   const { t } = useTranslation();
 
   return (
-    <div className=" col-lg-7 col-md-9 col-sm-12 mt-3">
-      <div className="card">
-        <div className="d-flex">
-          <div className="card-body col-lg-6 col-7">
-            <h5 className="card-title">{title}</h5>
-            <p className="card-text">{text}</p>
-            <p className="card-text">{price}</p>
-          </div>
-          <div className="d-flex align-items-center col-3 me-2">
-            <div>
-              <Link
-                className="btn btn-dark price-button"
-                to={"/contacts"}
-                onClick={ScrollToTop}
-              >
-                {t("pricesPage.button")}
-              </Link>
-            </div>
-          </div>
-        </div>
+    <div className="price-row">
+      <div>
+        <h3 className="price-row-title">{title}</h3>
+        <p className="price-row-value">{price}</p>
       </div>
+      <Link className="price-row-cta" to={"/contacts"} onClick={ScrollToTop}>
+        {t("pricesPage.button")}
+      </Link>
     </div>
   );
 };
@@ -41,15 +29,15 @@ const PricePage = () => {
   const { t } = useTranslation();
 
   return (
-    <>
+    <div className="price-page">
       <Seo
         title="Prices"
-        description="Pricing for interior design and architecture services from ODA in Dnipro and Kyiv, Ukraine."
+        description="Pricing for interior design and architecture services from ODA, a studio based in Ukraine and working worldwide."
       />
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
       <PagesHeader title={t("pricesPage.ourPrices")} />
-      <div className="container mt-5 mb-5 ">
-        <div className="row justify-content-center ">
+      <div className="container mt-5 mb-5">
+        <div className="price-list">
           <PriceCard
             title={t("pricesPage.tariff1.size")}
             price={t("pricesPage.tariff1.price")}
@@ -66,13 +54,11 @@ const PricePage = () => {
             title={t("pricesPage.tariff4.size")}
             price={t("pricesPage.tariff4.price")}
           />
-          <div className="d-flex justify-content-center mt-5">
-            {t("pricesPage.additionalInfo")}
-          </div>
         </div>
+        <p className="price-note">{t("pricesPage.additionalInfo")}</p>
       </div>
       <Footer settings={{ color: "black", bgColor: "white", shadow: true }} />
-    </>
+    </div>
   );
 };
 

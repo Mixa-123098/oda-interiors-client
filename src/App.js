@@ -1,13 +1,17 @@
 import React, { useState, useEffect, lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import authStore from "./store/authStore";
+import useRevealOnScroll from "./custom-hooks/useRevealOnScroll";
 
 import Header from "./components/Header";
 import BottomHeader from "./components/BottomHeader";
 import ScrollToTopButton from "./components/ScrollToTopButton";
-import QuickContact from "./components/QuickContact";
+// QuickContact остаётся выключенным (мобильная версия) - импорт
+// закомментирован вместе с ним, чтобы не ловить no-unused-vars.
+// import QuickContact from "./components/QuickContact";
 import Footer from "./components/Footer";
+import ScrollHint from "./components/ScrollHint";
 import Seo from "./components/Seo";
 // Homepage sections are above the fold on "/", so lazy-loading them only
 // bought a "Loading..." flash + layout shift right under the hero. Imported
@@ -15,6 +19,7 @@ import Seo from "./components/Seo";
 import FirstBlok from "./components/Bloks/FirstBlok";
 import SecondBlock from "./components/Bloks/SecondBlock";
 import SixBlock from "./components/Bloks/SixBlock";
+import FeaturedProjects from "./components/Bloks/FeaturedProjects";
 import ForthBlock from "./components/Bloks/ForthBlock";
 import FifthBlock from "./components/Bloks/FifthBlock";
 import MainCta from "./components/MainCta";
@@ -38,6 +43,7 @@ const RegistrationForm = lazy(() => import("./reg/auth/RegistrationForm"));
 const AdminPage = lazy(() => import("./components/admin-pannel/AdminPage"));
 const ContactsPage = lazy(() => import("./components/Pages/ContactsPage"));
 const PricePage = lazy(() => import("./components/Pages/PricePage"));
+const MapPage = lazy(() => import("./components/Pages/MapPage"));
 const NotFoundPage = lazy(() => import("./components/Pages/NotFoundPage"));
 
 const MainPageContainer = ({ updateIndexFromSecBlock }) => {
@@ -48,6 +54,15 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
     typeof window !== "undefined" &&
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // The two hero videos are ~4.3MB. On Data Saver or anything slower than 4G
+  // they stay as their poster frames (still a full-quality hero image) so the
+  // page isn't held up by video on a weak mobile connection.
+  const connection =
+    typeof navigator !== "undefined" &&
+    (navigator.connection || navigator.mozConnection);
+  const liteMedia =
+    prefersReducedMotion ||
+    !!(connection && (connection.saveData || (connection.effectiveType && connection.effectiveType !== "4g")));
   return (
     <div>
       <Seo />
@@ -56,7 +71,9 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
         <div className="overlay"></div>
 
         <video
-          autoPlay={!prefersReducedMotion}
+          autoPlay={!liteMedia}
+          preload={liteMedia ? "none" : "auto"}
+          data-lite={liteMedia ? "1" : undefined}
           loop
           muted
           playsInline
@@ -66,8 +83,12 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
           <source src={loftWebm} type="video/webm" />
           <source src={loftMp4} type="video/mp4" />
         </video>
+        {/* Second slide's video: not downloaded until the slide is shown
+            (BottomHeader plays it on activation), so it doesn't compete with
+            the first video and the rest of the page for bandwidth. */}
         <video
-          autoPlay={!prefersReducedMotion}
+          preload="none"
+          data-lite={liteMedia ? "1" : undefined}
           loop
           muted
           playsInline
@@ -82,9 +103,11 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
         <div className="header-content">
           <BottomHeader />
         </div>
+        <ScrollHint />
       </div>
 
       <FirstBlok />
+      <FeaturedProjects />
       <SecondBlock updateIndexFromSecBlock={updateIndexFromSecBlock} />
       <SixBlock />
       <ForthBlock />
@@ -97,6 +120,8 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
 };
 
 function App() {
+  useRevealOnScroll();
+  const { pathname } = useLocation();
   const [indexFromSecBlock, setIndexFromSecBlock] = useState(0);
   const updateIndexFromSecBlock = (index) => {
     setIndexFromSecBlock(index + 1);
@@ -107,7 +132,7 @@ function App() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <div key={pathname} className="page-fade" style={{ minHeight: "100vh" }}>
       <Routes>
         <Route
           path="/"
@@ -174,6 +199,14 @@ function App() {
           }
         />
         <Route
+          path="/map"
+          element={
+            <Suspense fallback={<div>Loading...</div>}>
+              <MapPage />
+            </Suspense>
+          }
+        />
+        <Route
           path="*"
           element={
             <Suspense fallback={<div>Loading...</div>}>
@@ -182,108 +215,12 @@ function App() {
           }
         />
       </Routes>
+      
+      {/* <QuickContact /> */}      {/* временно убрал, делаю мобильную версию */}
 
-      <QuickContact />
       <ScrollToTopButton />
     </div>
   );
 }
 
 export { App };
-
-// import { React, useState } from "react";
-// import { Route, Routes } from "react-router-dom";
-// import "./App.css";
-
-// import { ProjectsPage } from "./components/Pages/ProjectsPage";
-// import AboutPage from "./components/Pages/AboutPage";
-
-// import FirstBlok from "./components/Bloks/FirstBlok";
-// import SecondBlock from "./components/Bloks/SecondBlock";
-// // import ThirdBlock from "./components/Bloks/ThirdBlock";
-
-// // import bgvideo from "./assets/IMG_7070.MP4";
-// // import bgvideo from "./assets/bgvideo.mp4";
-// import bgvideo2 from "./assets/msedge_XyC2T8qYAq.png";
-// // import bgvideo2 from "./assets/bgvideo2.mp4";
-// import bgvideo3 from "./assets/photo_2023-11-03_12-03-29.jpg";
-// // import bgvideo3 from "./assets/bgvideo3.mp4";
-// import cheh from "./assets/cheh.mov"
-
-// import Header from "./components/Header";
-// import BottomHeader from "./components/BottomHeader";
-// import ProjectArticle from "./components/Pages/Projects/ProjectArticle";
-// import RegistrationForm from "./reg/auth/RegistrationForm";
-// import Footer from "./components/Footer";
-// import AdminPage from "./components/admin-pannel/AdminPage";
-// import ScrollToTopButton from "./components/ScrollToTopButton";
-// import ForthBlock from "./components/Bloks/ForthBlock";
-// import FifthBlock from "./components/Bloks/FifthBlock";
-// import SixBlock from "./components/Bloks/SixBlock";
-// import ContactsPage from "./components/Pages/ContactsPage";
-// import PricePage from "./components/Pages/PricePage";
-// import NotFoundPage from "./components/Pages/NotFoundPage";
-
-// const MainPageContainer = ({ updateIndexFromSecBlock }) => {
-//   return (
-//     <div>
-//       <Header />
-//       <div className="main">
-//         <div className="overlay"></div>
-
-//         <img src={bgvideo2} alt="" className="img video active " />
-//         <video src={cheh} autoPlay loop muted className="video a" />
-//         <img src={bgvideo3} alt="" className="img video a" />
-
-//         <div className="header-content">
-//           <BottomHeader />
-//         </div>
-//       </div>
-
-//       <FirstBlok />
-//       <SecondBlock updateIndexFromSecBlock={updateIndexFromSecBlock} />
-//       <SixBlock />
-//       {/* <ThirdBlock /> */}
-//       <ForthBlock />
-//       <FifthBlock />
-//       <Footer />
-//     </div>
-//   );
-// };
-
-// function App() {
-//   const [indexFromSecBlock, setIndexFromSecBlock] = useState(0);
-//   const updateIndexFromSecBlock = (index) => {
-//     setIndexFromSecBlock(index + 1);
-//   };
-
-//   return (
-//     <div style={{ minHeight: "100vh" }}>
-//       <Routes>
-//         <Route
-//           path="/"
-//           element={
-//             <MainPageContainer
-//               updateIndexFromSecBlock={updateIndexFromSecBlock}
-//             />
-//           }
-//         />
-//         <Route path="/edit" element={<AdminPage />} />
-//         <Route path="/login" element={<RegistrationForm />} />
-//         <Route
-//           path="/projects"
-//           element={<ProjectsPage indexFromSecBlock={indexFromSecBlock} />}
-//         />
-//         <Route path="/projects/:id" element={<ProjectArticle />} />
-//         <Route path="/about" element={<AboutPage />} />
-//         <Route path="/contacts" element={<ContactsPage />} />
-//         <Route path="/price" element={<PricePage />} />
-//         <Route path="*" element={<NotFoundPage />} />
-//       </Routes>
-
-//       <ScrollToTopButton />
-//     </div>
-//   );
-// }
-
-// export { App };

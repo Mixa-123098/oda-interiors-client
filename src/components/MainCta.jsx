@@ -14,7 +14,7 @@ const MainCta = () => {
       <p className="main-cta-subtitle">{t("mainPage.cta.subtitle")}</p>
       <Link
         to="/contacts"
-        className="btn btn-dark btn-lg px-4"
+        className="main-cta-button"
         onClick={ScrollToTop}
         data-umami-event="cta-home-consultation"
       >

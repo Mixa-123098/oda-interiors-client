@@ -16,7 +16,12 @@ import { API_URL } from "./config/api";
 // written back into the cache. Trade-off: an admin's edit reaches a returning
 // visitor within the cache TTL (24h) rather than instantly. Bump CACHE_VERSION
 // to force-invalidate every client's cache immediately if ever needed.
-const CACHE_VERSION = "v4";
+// Bump this on EVERY copy migration in server/index.js: those rewrite values
+// already stored in the DB, and without a bump a returning visitor keeps
+// serving the old strings from their own cache for up to 24h.
+//   v5 - "Kyiv · Dnipro / cities we work in" -> "Worldwide"
+//   v6 - About page values list condensed to one line each
+const CACHE_VERSION = "v6";
 
 i18n
   .use(ChainedBackend)

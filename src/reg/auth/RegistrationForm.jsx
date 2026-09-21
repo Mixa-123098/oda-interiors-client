@@ -49,37 +49,45 @@ const AuthForm = observer(() => {
 
   return (
     <div className="reg-auth">
-      <h2>{t("authForm.auth")}</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>{t("authForm.username")}</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-          />
-        </div>
+      <form className="reg-auth-form" onSubmit={handleSubmit}>
+        <h2 className="reg-auth-title">{t("authForm.auth")}</h2>
 
-        <div className="mt-1">
-          <label>{t("authForm.password")}:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="d-flex justify-content-center mt-3 mb-4">
-          <button type="submit" className="btn btn-dark">
-            {t("authForm.login1")}
-          </button>
-        </div>
-        <div onClick={() => navigate("/")}>
-          <span className="text-decoration-underline cursor-pointer">
-            {t("authForm.toTheHomePage")}
-          </span>
-        </div>
+        <label className="reg-auth-label" htmlFor="auth-username">
+          {t("authForm.username")}
+        </label>
+        <input
+          id="auth-username"
+          className="reg-auth-field"
+          type="text"
+          name="username"
+          autoComplete="username"
+          value={formData.username}
+          onChange={handleInputChange}
+        />
+
+        <label className="reg-auth-label" htmlFor="auth-password">
+          {t("authForm.password")}
+        </label>
+        <input
+          id="auth-password"
+          className="reg-auth-field"
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          value={formData.password}
+          onChange={handleInputChange}
+        />
+
+        <button type="submit" className="reg-auth-submit">
+          {t("authForm.login1")}
+        </button>
+        <button
+          type="button"
+          className="reg-auth-home"
+          onClick={() => navigate("/")}
+        >
+          {t("authForm.toTheHomePage")}
+        </button>
       </form>
     </div>
   );

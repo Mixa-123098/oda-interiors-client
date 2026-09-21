@@ -1,49 +1,246 @@
+/* svh, not vh: on a phone 100vh is the viewport with the browser UI *hidden*,
+   so the hero photo ran past the bottom of the screen while its own .overlay
+   scrim (already 100svh, see App.css) stopped short and left a bright strip.
+   Matches the home hero, which is 100svh throughout. */
 .paralax_img {
-    position: relative;
-    overflow: hidden;
-    height: 100vh;
-    width: 100%;
-
+  position: relative;
+  overflow: hidden;
+  height: 100svh;
+  width: 100%;
 }
 
 .paralax_img img {
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
+  width: 100%;
+  height: 100svh;
+  object-fit: cover;
 }
 
 .header-paralax {
-    position: absolute;
-    margin-left: 7.5vw;
-    color: var(--mainColor);
-    z-index: 2;
+  position: absolute;
+  margin-left: 7.5vw;
+  color: var(--mainColor);
+  z-index: 2;
 }
+/* Was min-height:90vh + padding-top:25vh - about a screen of mostly empty
+   space around ~10 lines of text. Sized by content now. */
 .brief-height{
-    min-height: 90vh;
-    padding-top: 25vh;
+  align-items: flex-start;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-top: clamp(4rem, 9vw, 8rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
 }
 .brif-styles{
-    padding-right: 5vw;
+  padding-right: 0;
+}
+.brif-styles h3,
+.planning-text h3 {
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+  letter-spacing: -0.01em;
+  margin-bottom: 1.25rem;
+}
+.brif-styles p,
+.planning-text {
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+/* Below the lg breakpoint the bootstrap col-lg-* widths stop applying, so the
+   two blocks shrank to their content (facts rows ended ~70% across). Stack
+   them full-width. */
+@media (max-width: 991.98px) {
+  .brief-height {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .brif-styles,
+  .brif-info-styles {
+    width: 100%;
+  }
+}
+
+/* Project facts as ruled rows with small tracked labels instead of bold
+   run-in text. The <br> after each label is hidden since the label is a block. */
+.brif-info-styles {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+.brif-info-styles > div {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.brif-info-styles p {
+  margin: 0;
+}
+.brif-info-styles br {
+  display: none;
+}
+.brif-info-styles b {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--notMainColor);
 }
 .qh {
-    height: 200vh;
+  height: 200vh;
 }
-.planning-img{
-    object-fit: contain;
-    max-width: 100%;
-    max-height: 75vh
-}
-.planning-text{
-    padding: 5vw;
-}
-
-.project_imges{
-    margin-top: 7.5vw;
+/* The plan opens in the same viewer as the gallery (see Lightbox.jsx), so the
+   wrapper is a button - stripped back to nothing but the pointer cue. */
+.planning-zoom {
+  display: block;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
 }
 
+.planning-zoom:focus-visible {
+  outline: 1px solid #111;
+  outline-offset: 4px;
+}
+
+.planning-img {
+  display: block;
+  object-fit: contain;
+  max-width: 100%;
+  /* svh: with vh a tall plan ran past the bottom of a phone screen */
+  max-height: 75svh;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .planning-zoom:hover .planning-img {
+    transform: scale(1.02);
+  }
+}
+
+.planning-text {
+  padding: 5vw;
+}
+
+/* Photo gallery sits right after the description. Same container width as the
+   footer, so the page keeps one column edge throughout. */
+.project-gallery {
+  width: min(1100px, 100% - 3rem);
+  margin: clamp(2rem, 5vw, 4.5rem) auto clamp(2rem, 5vw, 4.5rem);
+}
+
+/* One shared ratio for every cell. Photos used to be laid out at their own
+   size and centred, but the set mixes 3:4 and 4:3 at roughly 380-700px, so
+   columns never lined up and each small photo sat in a wide empty gutter.
+   3:4 because two thirds of the set is already exactly that - those crop to
+   nothing - and the landscapes keep the centre of the room. Nothing is lost:
+   a click opens the full uncropped frame (components/Lightbox.jsx). */
+.project-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.project-gallery-cell {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.project-gallery-cell:focus-visible {
+  outline: 1px solid #111;
+  outline-offset: 3px;
+}
+
+.gallery-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Same slow, restrained zoom as the project thumbnails on /projects; hover
+   pointers only, so a tap doesn't leave a phone stuck in the zoomed state. */
+@media (hover: hover) {
+  .project-gallery-cell:hover .gallery-img {
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 1000px) {
+  .project-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .project-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.planning-adaptation {
+  margin-top: clamp(1rem, 3vw, 3rem);
+}
+
+/* height was a pure vw value (5vw = 19px at 375px wide) with no floor -
+   shorter than the "Next Project" text itself, so the label overflowed the
+   grey background straight into the footer below (#mobile-critique).
+   Padding instead lets the row size to its own text at any width. */
 .prev-and-next-project{
-    align-items: center;
-    background-color: var(--notMainColor);
-    border-bottom: 1px solid white;
-    height: 5vw;
+  align-items: center;
+  background-color: var(--notMainColor);
+  border-bottom: 1px solid white;
+  padding: 1.5rem 0;
+}
+/* Previous / next project: the arrow slides toward its direction and the
+   label gets an underline that draws in from the leading edge on hover. */
+.pn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pn-link h4 {
+  position: relative;
+  margin: 0;
+  padding-bottom: 0.2rem;
+}
+.pn-link h4::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.pn-arrow {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (hover: hover) {
+  .pn-link:hover h4::after,
+  .pn-link:focus-visible h4::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .pn-link--prev:hover .pn-arrow,
+  .pn-link--prev:focus-visible .pn-arrow {
+    transform: translateX(-8px);
+  }
+  .pn-link--next:hover .pn-arrow,
+  .pn-link--next:focus-visible .pn-arrow {
+    transform: translateX(8px);
+  }
+}
+.pn-link:active .pn-arrow {
+  transform: scale(0.9);
 }

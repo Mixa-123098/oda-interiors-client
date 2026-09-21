@@ -4,63 +4,50 @@ import Header from "../Header";
 import PagesHeader from "./PagesHeader";
 import Footer from "../Footer";
 import Seo from "../Seo";
-import CardTamplate from "../tamplates/CardTamplate";
+import TrustBar from "../TrustBar";
+import ResponsiveImg from "../ResponsiveImg";
 import { Link } from "react-router-dom";
 import ScrollToTop from "../../custom-hooks/ScrollToTop";
 import { useTranslation } from "react-i18next";
 
-const IdeologyTemplate = ({ header, text1, text2 }) => {
-  return (
-    <>
-      <div className="first-block about-hero-block pt-4">
-        <div className="first-block-content-container align-items-center">
-          <h2 className="text-center">{header}</h2>
-          <div className="row mt-4 pt-4 pb-2 justify-content-center">
-            <div className="col-md-4 col">
-              <p>{text1}</p>
-            </div>
-            <div className="col-md-4 col">
-              <p className="">{text2}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+// Small tracked label that opens each section. Numbered, so the page reads as
+// one sequence rather than a stack of unrelated centred headings.
+const Eyebrow = ({ n, children }) => (
+  <p className="about-eyebrow">
+    <span className="about-eyebrow-num">{String(n).padStart(2, "0")}</span>
+    {children}
+  </p>
+);
 
-const Ideology = () => {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <IdeologyTemplate
-        header={t("aboutPage.block3.title")}
-        text1={t("aboutPage.block3.mainTextPartOne")}
-        text2={t("aboutPage.block3.mainTextPartTwo")}
-      />
-    </>
-  );
-};
+// Editorial two-column block: the label sits in a narrow left column, the
+// prose in a wide one. Replaces the centred heading + two floating columns of
+// 14px text that used to sit in the middle of an otherwise empty page.
+const TextBlock = ({ n, header, text1, text2, className = "" }) => (
+  <section className={`about-block ${className}`}>
+    <Eyebrow n={n}>{header}</Eyebrow>
+    <div className="about-block-body">
+      <p className="about-block-lead">{text1}</p>
+      <p className="about-block-text">{text2}</p>
+    </div>
+  </section>
+);
 
 const OurStory = () => {
   const { t } = useTranslation();
-
   return (
-    <>
-      <IdeologyTemplate
-        header={t("aboutPage.block1.title")}
-        text1={t("aboutPage.block1.mainTextPartOne")}
-        text2={t("aboutPage.block1.mainTextPartTwo")}
-      />
-    </>
+    <TextBlock
+      n={1}
+      header={t("aboutPage.block1.title")}
+      text1={t("aboutPage.block1.mainTextPartOne")}
+      text2={t("aboutPage.block1.mainTextPartTwo")}
+    />
   );
 };
 
 const OurTeam = () => {
   const { t } = useTranslation();
 
-  const imgesList = [
+  const people = [
     {
       name: t("aboutPage.block2.Marina.name"),
       jobTitle: t("aboutPage.block2.Marina.jobTitle"),
@@ -82,72 +69,83 @@ const OurTeam = () => {
       img: "photo_2024-02-02_08-25-37.jpg",
     },
   ];
+
   return (
-    <section className="about-section">
-      <h2 className="text-center about-section-title">
-        {t("aboutPage.block2.title")}
-      </h2>
-      <div className="row justify-content-center">
-        {imgesList.map((person, index) => (
-          <div key={index} className="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <CardTamplate
-              img_src={`/img/main_imges_folder/${person.img}`}
-              alt={person.name}
-              title={person.name}
-              imgHeight="320px"
-              subtitle={person.jobTitle}
-              border={false}
-            />
-          </div>
+    <section className="about-block about-team">
+      <Eyebrow n={2}>{t("aboutPage.block2.title")}</Eyebrow>
+      <div className="about-team-grid">
+        {people.map((person) => (
+          <figure className="about-person" key={person.name}>
+            <div className="about-person-photo">
+              <ResponsiveImg
+                file={person.img}
+                alt={person.name}
+                sizes="(max-width: 768px) 50vw, 25vw"
+              />
+            </div>
+            <figcaption>
+              <h3 className="about-person-name">{person.name}</h3>
+              <p className="about-person-role">{person.jobTitle}</p>
+            </figcaption>
+          </figure>
         ))}
       </div>
     </section>
   );
 };
 
-const Cinnosty = () => {
+const Ideology = () => {
   const { t } = useTranslation();
+  return (
+    <section className="about-ideology">
+      <div className="about-ideology-inner">
+        <Eyebrow n={3}>{t("aboutPage.block3.title")}</Eyebrow>
+        <blockquote className="about-ideology-quote">
+          {t("aboutPage.block3.mainTextPartOne")}
+        </blockquote>
+        <p className="about-ideology-text">
+          {t("aboutPage.block3.mainTextPartTwo")}
+        </p>
+      </div>
+    </section>
+  );
+};
 
-  const valuesList = t("aboutPage.block4.valuesList", { returnObjects: true }); //возвращаем обьект так как там должны получить массив, а не строку
+const Values = () => {
+  const { t } = useTranslation();
+  // returnObjects: the key holds an array, not a string
+  const valuesList = t("aboutPage.block4.valuesList", { returnObjects: true });
+  if (!Array.isArray(valuesList)) return null;
 
   return (
-    <section className="values-section">
-      <h2 className="text-center values-title">
-        {t("aboutPage.block4.ourValues")}
-      </h2>
-
-      <div className="row g-4 justify-content-center pt-4 pb-2">
-        {valuesList &&
-          valuesList.map((item, index) => (
-            <div
-              className="col-lg-4 col-md-6 col-sm-12"
-              key={item.title}
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              <CardTamplate
-                title={item.title}
-                card_content={item.content}
-                isList={true}
-              />
-            </div>
-          ))}
-      </div>
+    <section className="about-block about-values-section">
+      <Eyebrow n={4}>{t("aboutPage.block4.ourValues")}</Eyebrow>
+      <ol className="about-values">
+        {valuesList.map((item, index) => (
+          <li className="about-value" key={item.title}>
+            <span className="about-value-num">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <h3 className="about-value-title">{item.title}</h3>
+            <p className="about-value-text">
+              {/* `summary` is the one-line version; until it exists in the
+                  translations the original bullet text is shown rather than
+                  silently dropping half the copy. */}
+              {item.summary || (item.content || "").split(";").join(". ")}
+            </p>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 };
 
 const AboutCta = () => {
   const { t } = useTranslation();
-
   return (
     <section className="about-cta">
-      <h2>{t("aboutPage.cta.title")}</h2>
-      <Link
-        className="btn btn-dark mt-3"
-        to={"/contacts"}
-        onClick={ScrollToTop}
-      >
+      <h2 className="about-cta-title">{t("aboutPage.cta.title")}</h2>
+      <Link className="main-cta-button" to="/contacts" onClick={ScrollToTop}>
         {t("aboutPage.cta.button")}
       </Link>
     </section>
@@ -161,18 +159,19 @@ const AboutPage = () => {
     <div className="about-page">
       <Seo
         title="About Us"
-        description="Meet the ODA team — architects and interior designers working in Dnipro and Kyiv, Ukraine, with over 20 years of combined experience."
+        description="Meet the ODA team — architects and interior designers based in Ukraine and working worldwide, with over 20 years of combined experience."
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
       <PagesHeader title={t("aboutPage.aboutUs")} />
 
-      <div className="container mt-5">
-        <OurStory />
-        <OurTeam />
-        <Ideology />
-        <Cinnosty />
-        <AboutCta />
-      </div>
+      <OurStory />
+      {/* Same credibility strip as the home page - one set of facts, stated
+          once, rather than a second wording of the same claims. */}
+      <TrustBar />
+      <OurTeam />
+      <Ideology />
+      <Values />
+      <AboutCta />
 
       <Footer settings={{ color: `black`, bgColor: `white`, shadow: true }} />
     </div>

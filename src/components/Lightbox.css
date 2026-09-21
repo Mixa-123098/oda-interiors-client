@@ -1,0 +1,168 @@
+/* Fullscreen photo viewer (see components/Lightbox.jsx). Near-black rather
+   than pure black: interior renders are mostly warm greys, and a dead-black
+   field makes them look dim by contrast. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  /* Opaque, not a 97% scrim: at 0.97 the gallery behind still ghosted through
+     and read as a stray layer rather than a viewer. */
+  background: #0e0e0e;
+  animation: lightbox-in 0.25s ease both;
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightbox-figure {
+  grid-column: 2;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* the figure fills the middle track; the photo sizes itself inside it */
+  width: 100%;
+  height: 100%;
+}
+
+/* The grid crops to a shared ratio; here the whole frame is shown. The upscale
+   ceiling comes from the component as an inline max-width/height. */
+.lightbox-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 92vw;
+  max-height: 88svh;
+  object-fit: contain;
+  animation: lightbox-img-in 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes lightbox-img-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Same hairline language as .scroll-hint / .scroll-top, inverted for the dark
+   field: 1px strokes, square, no fill at rest. */
+.lightbox-btn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: #fff;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-btn svg {
+  width: 22px;
+  height: 22px;
+  overflow: visible;
+}
+
+.lightbox-btn:hover,
+.lightbox-btn:focus-visible {
+  opacity: 1;
+}
+
+.lightbox-btn:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 4px;
+}
+
+.lightbox-prev {
+  grid-column: 1;
+}
+
+.lightbox-prev:hover {
+  transform: translateX(-3px);
+}
+
+.lightbox-next {
+  grid-column: 3;
+}
+
+.lightbox-next:hover {
+  transform: translateX(3px);
+}
+
+/* Close sits over the top-right corner of the whole overlay, not in a track. */
+.lightbox-close {
+  position: absolute;
+  top: clamp(0.5rem, 2vw, 1.5rem);
+  right: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+/* Same tracked tabular numerals as the hero counter. */
+.lightbox-counter {
+  position: absolute;
+  bottom: clamp(0.75rem, 2.5vw, 1.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  opacity: 0.6;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+
+.lightbox-counter-sep {
+  margin: 0 0.4em;
+  opacity: 0.5;
+}
+
+/* Phones: the side arrows would eat the photo's width, so drop them - swipe
+   and the counter carry the navigation instead. */
+@media (max-width: 700px) {
+  .lightbox {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .lightbox-figure {
+    grid-column: 1;
+  }
+
+  .lightbox-prev,
+  .lightbox-next {
+    display: none;
+  }
+
+  .lightbox-img {
+    max-width: 100vw;
+    max-height: 82svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox-img {
+    animation: none;
+  }
+
+  .lightbox-btn:hover {
+    transform: none;
+  }
+}

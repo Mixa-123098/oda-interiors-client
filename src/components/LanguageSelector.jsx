@@ -3,7 +3,9 @@ import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import languagesStore from "../store/languagesStore";
 
-const LanguageSelector = observer(() => {
+// color: text colour for the header context (dark on light pages, white on
+// hero photos) - the same value the nav links get.
+const LanguageSelector = observer(({ color }) => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState(
@@ -48,16 +50,27 @@ const LanguageSelector = observer(() => {
   };
 
   return (
-    <div className="language-selector" ref={ref}>
+    <div className="language-selector" ref={ref} style={{ color: color || "var(--mainColor)" }}>
       <button
         type="button"
         className="language-selector-toggle"
         onClick={() => setIsOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
       >
         {language.toUpperCase()}
-        <span className={`language-selector-caret${isOpen ? " open" : ""}`}>
-          ▾
-        </span>
+        <svg
+          className={`language-selector-caret${isOpen ? " open" : ""}`}
+          viewBox="0 0 10 6"
+          width="10"
+          height="6"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+        >
+          <polyline points="1,1 5,5 9,1" />
+        </svg>
       </button>
       {isOpen && (
         <ul className="language-selector-menu">

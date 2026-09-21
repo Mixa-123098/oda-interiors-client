@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import "./Loader.css"; // Создадим стили отдельно
 import { useTranslation } from "react-i18next";
 
 const Loader = () => {
   const { t } = useTranslation();
-  const messages = t("loader", { returnObjects: true });
+  // t returns a fresh array each render, which would restart the intervals
+  // below on every render if listed as a dependency. Memoized on t, whose
+  // identity changes exactly when the language does.
+  const messages = useMemo(() => {
+    const list = t("loader", { returnObjects: true });
+    return Array.isArray(list) ? list : [String(list)];
+  }, [t]);
 
   // const messages = [
   //   "Загрузка...",
@@ -31,7 +37,7 @@ const Loader = () => {
       clearInterval(messageInterval);
       clearInterval(dotInterval);
     };
-  }, []);
+  }, [messages]);
 
   return (
     <div className="loader-container">
