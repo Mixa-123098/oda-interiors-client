@@ -7,9 +7,8 @@ import { useEffect } from "react";
 const SELECTOR = [
   ".price-row",
   ".trust-item",
-  ".about-hero-block",
-  ".about-section",
-  ".values-section",
+  ".about-block",
+  ".about-ideology",
   ".about-cta",
   ".contacts-panel",
   ".contacts-direct",

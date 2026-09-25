@@ -27,18 +27,27 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
           (row) => row.project_id === element.id && row.lang === i18n.language
         );
 
+      const city = (translation && translation.city) || element.project_city;
+      const country =
+        (translation && translation.country) || element.project_country;
+      const meta = [
+        categoryLabels[String(element.project_specialization).trim()],
+        [city, country].filter(Boolean).join(", "),
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
       return (
-        <div key={element.id} id={index}>
-          <Link
-            to={`/projects/${element.id} `}
-            className="text-center link-style"
-          >
+        // id={index} used to put id="0", id="1" ... on these wrappers - no one
+        // referenced them and two lists on one page would collide.
+        <article key={element.id} className="project-card">
+          <Link to={`/projects/${element.id} `} className="project-card-link">
             <div className="project-thumb-wrap">
               <ResponsiveImg
                 file={element.project_img_src}
                 alt={element.project_name || ""}
-                className="project_img "
-                sizes="(max-width: 700px) 100vw, 58vw"
+                className="project_img"
+                sizes="(max-width: 700px) 100vw, 46vw"
                 eager={index < 2}
               />
               {element.is_hidden && (
@@ -48,27 +57,23 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
               )}
             </div>
 
-            <h5 className="project_name">
-              {element &&
-                (t(`projects.project${element.id}.name`) !==
-                `projects.project${element.id}.name`
-                  ? t(`projects.project${element.id}.name`)
-                  : (translation && translation.name) || element.project_name)}
-            </h5>
-            {(() => {
-              const city = (translation && translation.city) || element.project_city;
-              const country =
-                (translation && translation.country) || element.project_country;
-              const meta = [
-                categoryLabels[String(element.project_specialization).trim()],
-                [city, country].filter(Boolean).join(", "),
-              ]
-                .filter(Boolean)
-                .join(" · ");
-              return meta ? <span className="project_meta">{meta}</span> : null;
-            })()}
+            <div className="project-card-caption">
+              {/* Numbered across the whole filtered set, not per page, so the
+                  count keeps running on page two. */}
+              <span className="project_index">
+                {String(startIndex + index + 1).padStart(2, "0")}
+              </span>
+              <h3 className="project_name">
+                {element &&
+                  (t(`projects.project${element.id}.name`) !==
+                  `projects.project${element.id}.name`
+                    ? t(`projects.project${element.id}.name`)
+                    : (translation && translation.name) || element.project_name)}
+              </h3>
+              {meta ? <span className="project_meta">{meta}</span> : null}
+            </div>
           </Link>
-        </div>
+        </article>
       );
     });
 
@@ -109,12 +114,15 @@ const Projects = ({ indexFromSecBlock }) => {
   const [focusedIndex, setFocusedIndex] = useState(index);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 9;
+  // Keep this EVEN: the grid is two columns, and 9 (a leftover from the old
+  // three-column mosaic) left the last row of every page half empty. 10 is
+  // five full rows - a substantial page without an endless scroll.
+  const itemsPerPage = 10;
 
   // Paging swaps the cards in place, so without this the visitor is left at
   // the bottom of the page looking at the pagination row while the new page's
-  // photos sit above them, unseen.
-  const listTopRef = useRef(null);
+  // photos sit above them, unseen. Go all the way to the top of the document
+  // (not just to the category tabs) so the new page starts from the header.
   const skipFirstScroll = useRef(true);
 
   useEffect(() => {
@@ -123,17 +131,10 @@ const Projects = ({ indexFromSecBlock }) => {
       skipFirstScroll.current = false;
       return;
     }
-    const el = listTopRef.current;
-    if (!el) return;
-
-    // Measure the fixed header rather than assuming its height: it is 80px on
-    // desktop and 72px below 1000px, and it would otherwise cover the tabs.
-    const header = document.querySelector(".header");
-    const offset = (header ? header.getBoundingClientRect().height : 0) + 16;
-    const top = el.getBoundingClientRect().top + window.scrollY - offset;
 
     window.scrollTo({
-      top: Math.max(top, 0),
+      top: 0,
+      left: 0,
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
         : "smooth",
@@ -198,7 +199,7 @@ const Projects = ({ indexFromSecBlock }) => {
 
   return (
     <>
-      <div className="d-flex justify-content-center" ref={listTopRef}>
+      <div className="d-flex justify-content-center">
         <nav className="projects-nav">{categories}</nav>
       </div>
 

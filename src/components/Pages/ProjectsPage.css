@@ -76,45 +76,34 @@
 
 }
 
-/* Editorial mosaic: 12-column grid, pairs alternate wide+narrow / narrow+wide
-   (same rhythm as the home "Selected projects"). */
+/* Two equal columns, every photo in the same frame. This was a 12-column
+   mosaic where pairs alternated span-7 / span-5 and the narrow cell was
+   cropped to 4:5 - but every source photo is 4:3 landscape, so the portrait
+   cells cut each room in half. The alternating margin-top on top of
+   align-items:start then left half-screen voids between rows, which read as
+   broken rather than as rhythm. */
 .our-projects {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: clamp(1.75rem, 3.5vw, 3.5rem) clamp(1rem, 2vw, 2rem);
-  align-items: start;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1rem, 2vw, 2rem);
   /* same side margins as the footer's container, so the page has air at the edges */
   width: min(1296px, 100% - 3rem);
 }
 
-.our-projects>div:nth-child(4n+1),
-.our-projects>div:nth-child(4n+4) {
-  grid-column: span 7;
-}
-
-.our-projects>div:nth-child(4n+2),
-.our-projects>div:nth-child(4n+3) {
-  grid-column: span 5;
-}
-
-.our-projects>div:nth-child(4n+1) .project-thumb-wrap,
-.our-projects>div:nth-child(4n+4) .project-thumb-wrap {
-  aspect-ratio: 4 / 3;
-}
-
-.our-projects>div:nth-child(4n+2) .project-thumb-wrap,
-.our-projects>div:nth-child(4n+3) .project-thumb-wrap {
-  aspect-ratio: 4 / 5;
-}
-
-/* Second card of each pair sits lower, so the two columns don't end on one line. */
-.our-projects>div:nth-child(2n) {
-  margin-top: clamp(0rem, 4vw, 3.5rem);
-}
-
-.our-projects>div>a {
+.project-card-link {
   display: block;
-  text-align: left !important;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 3:2 from a 4:3 source trims about a tenth of the height - enough to read as
+   a deliberate frame, little enough that no composition is lost. */
+.project-thumb-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
 }
 
 .project_img {
@@ -125,11 +114,20 @@
   transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.project-thumb-wrap {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  overflow: hidden;
+/* Caption: running number, name in the display serif, then the tracked meta -
+   the same three-part label the gallery and the hero counter use. */
+.project-card-caption {
+  padding-top: 1.1rem;
+}
+
+.project_index {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  color: var(--notMainColor);
 }
 
 /* Slow, restrained zoom on hover; hover-capable pointers only so touch
@@ -149,49 +147,88 @@
 
 .project_meta {
   display: block;
-  padding-top: 0.25rem;
-  font-size: 0.75rem;
+  padding-top: 0.4rem;
+  font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--notMainColor);
 }
 
+.project_name {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.5rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: #111;
+}
+
+/* One column on a phone. The frame stays 3:2 so the page is one system at
+   every width - a full-width card is big enough that a landscape crop reads
+   fine. */
 @media (max-width: 700px) {
   .our-projects {
     grid-template-columns: 1fr;
-  }
-  .our-projects>div,
-  .our-projects>div:nth-child(n) {
-    grid-column: 1 / -1;
-    margin-top: 0;
-  }
-  .our-projects>div .project-thumb-wrap {
-    aspect-ratio: 4 / 3 !important;
+    gap: clamp(2rem, 8vw, 3rem);
   }
 }
 
-.project_name {
-  padding-top: 1rem;
-  margin-bottom: 0;
-  font-family: "Playfair Display", Georgia, serif;
+
+
+
+
+/* Pagination. Each number used to be 15% of the row wide, which flung "1" and
+   "2" a third of a screen apart; spacing comes from a gap now. Same tracked
+   numerals + drawn-in underline as the category tabs above. */
+.projects-pages-nav {
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.projects-pages-nav > button {
+  position: relative;
+  padding: 8px 2px;
+  background: none;
+  border: 0;
+  font-size: 0.78rem;
   font-weight: 500;
-  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.3rem);
-  letter-spacing: -0.005em;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: var(--notMainColor);
+  cursor: pointer;
+  transition: color 0.25s ease;
 }
 
+.projects-pages-nav > button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
 
+.projects-pages-nav > button:hover {
+  color: #111;
+}
 
-
-
-/* Кнопки пагинации */
-.projects-pages-nav>span {
-  width: 15%;
-  max-width: 15%;
-  text-align: center;
+.projects-pages-nav > button:focus-visible {
+  outline: 1px solid #111;
+  outline-offset: 3px;
 }
 
 .active-page {
-  font-weight: bold;
+  color: #111;
+}
+
+.active-page::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 /* Phones: the four tabs don't fit in one row - let the row scroll sideways from the
    same left edge as the cards instead of cutting the last tab off. */
