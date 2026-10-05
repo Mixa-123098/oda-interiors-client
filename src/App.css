@@ -578,6 +578,28 @@ video {
   padding: 10px 0;
 }
 
+/* The glyph is ~17px wide and had only vertical padding: a ~17x37px target
+   that a finger on a tablet easily missed. Pad it out to a 44x44 hit box
+   (Apple HIG minimum) without changing the icon's size. The boxes themselves
+   now space the icons (gap 0, so hit areas never overlap), and the first one
+   is pulled back so its glyph still sits on the gutter. */
+.bottomHeader-left {
+  gap: 0;
+}
+
+.bottomHeader-left .nav_icons_width {
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.bottomHeader-left .nav_icons_width:first-child {
+  margin-left: -13px;
+}
+
 /* Lighter than the slide control it shares the bar with: these are secondary.
    Spacing comes from the flex gap on .bottomHeader-left, not a margin on every
    link (which also indented the first icon away from the gutter). */
@@ -589,10 +611,22 @@ video {
   transition: opacity 0.2s, transform 0.2s;
 }
 
-.social-icon-link:hover,
+/* Hover lift only where there's a real hover: on touch, :hover sticks after
+   the tap and left the icon shifted. Touch gets the press state instead. */
+@media (hover: hover) {
+  .social-icon-link:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
 .social-icon-link:focus-visible {
   opacity: 1;
   transform: translateY(-2px);
+}
+
+.social-icon-link:active {
+  opacity: 1;
 }
 
 /* Blocks */

@@ -4,6 +4,32 @@ import HeaderText from "./HeaderText";
 import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import { useState } from "react";
 
+// Module-level, not nested in BottomHeader: a component declared inside
+// another is a new type on every render, so React remounted these links on
+// every 6s slide tick - a tap that straddled it (easy on a tablet) was lost.
+function BottomHeaderIcons() {
+  return (
+    <div className="bottomHeader-left">
+      <a
+        href="https://www.instagram.com/_svidoma_/"
+        className="nav_icons_width social-icon-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+      >
+        <FaInstagram />
+      </a>
+      <a
+        href="/"
+        className="nav_icons_width social-icon-link"
+        aria-label="Facebook"
+      >
+        <FaFacebookF />
+      </a>
+    </div>
+  );
+}
+
 function BottomHeader() {
   const { t } = useTranslation();
   const [count, setCount] = useState(1);
@@ -39,29 +65,6 @@ function BottomHeader() {
 
     return () => clearInterval(intervalId);
   }, []);
-
-  function BottomHeaderIcons() {
-    return (
-      <div className="bottomHeader-left">
-        <a
-          href="https://www.instagram.com/_svidoma_/"
-          className="nav_icons_width social-icon-link"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram"
-        >
-          <FaInstagram />
-        </a>
-        <a
-          href="/"
-          className="nav_icons_width social-icon-link"
-          aria-label="Facebook"
-        >
-          <FaFacebookF />
-        </a>
-      </div>
-    );
-  }
 
   return (
     <>
