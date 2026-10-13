@@ -40,7 +40,10 @@ export default function useRevealOnScroll() {
           io.unobserve(entry.target);
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -6% 0px" }
+      // threshold 0, not 0.1: on a phone a tall section (the About team is
+      // ~700px) peeking 40px into the bottom of the screen never reached 10%,
+      // so the cut-off edge meant to say "there's more" stayed invisible.
+      { threshold: 0, rootMargin: "0px 0px -6% 0px" }
     );
 
     // Per-effect set, not a DOM flag: StrictMode runs this effect twice, and

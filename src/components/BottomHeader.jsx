@@ -76,7 +76,7 @@ function BottomHeader() {
           {[1, 2, 3].map((num) => (
             // Was a <span onClick>: not reachable by keyboard and announced as
             // plain text. A real button, with the current slide marked, and the
-            // number padded to 01/02/03 to match the big counter above.
+            // number padded to 01/02/03.
             <button
               key={num}
               type="button"

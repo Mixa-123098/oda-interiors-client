@@ -21,7 +21,8 @@ import { API_URL } from "./config/api";
 // serving the old strings from their own cache for up to 24h.
 //   v5 - "Kyiv · Dnipro / cities we work in" -> "Worldwide"
 //   v6 - About page values list condensed to one line each
-const CACHE_VERSION = "v6";
+//   v7 - About page story rewritten (was about building the website)
+const CACHE_VERSION = "v7";
 
 i18n
   .use(ChainedBackend)

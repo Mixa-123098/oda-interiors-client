@@ -85,7 +85,7 @@ const AdminPage = observer(() => {
     return (
       <>
         <Header fontColor="#000000" invert="invert(0%)" rep={true} />
-        <PagesHeader title={t("editPage.changePassword.title")} />
+        <PagesHeader title={t("editPage.changePassword.title")} showTitle />
         <div className="container mt-5 mb-5">
           <p className="text-muted">{t("editPage.changePassword.forcedHint")}</p>
           <ChangePasswordForm
@@ -110,7 +110,7 @@ const AdminPage = observer(() => {
   return (
     <>
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
-      <PagesHeader title={t("editPage.adminPanel")} />
+      <PagesHeader title={t("editPage.adminPanel")} showTitle />
 
       <div className="container mt-5">
         <ul className="nav nav-tabs admin-tabs flex-wrap">

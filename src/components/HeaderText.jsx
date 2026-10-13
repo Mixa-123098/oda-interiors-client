@@ -24,10 +24,8 @@ const HeaderText = ({ count }) => {
 
   return (
     <div className="header-text d-flex">
-      <div className="countPage">
-        0{count}/<span className="bigger-text">03</span>
-      </div>
-
+      {/* No "01/03" counter here any more: the slide buttons at the bottom
+          already show the same position. */}
       <div className="textPage">
         <div className="titlePage">{titlePage[count - 1]}</div>
         <div className="subtitlePage">

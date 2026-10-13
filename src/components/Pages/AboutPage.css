@@ -15,6 +15,42 @@
   border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+/* The page title is visually hidden now (PagesHeader), so the first block's
+   rule would separate the content from nothing - drop it and the full
+   section padding above it. */
+.about-page .pages-header + .about-block {
+  border-top: none;
+  padding-top: clamp(1rem, 2.5vw, 2rem);
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* Tighter air around the story/team rule, so the portraits begin on the
+   first screen - their cut-off top is the cue that the page goes on. */
+.about-page .pages-header + .about-block + .about-team {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* The values section above already ends with plenty of space. Width and rule
+   colour match the page's 1100px column, so the strip's rules line up with
+   the values rules right above it (it is 1000px wide elsewhere). */
+.about-page .trust-bar {
+  margin-top: 0;
+  max-width: min(1100px, 100% - 3rem);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* The trust strip's top rule closes the values list now; the list's own
+   closing rule 50px above it doubled up on phones. */
+.about-page .about-value:last-child {
+  border-bottom: none;
+}
+
+/* The tinted band's own edge already separates it from the values - a rule
+   right under it read as a double edge. */
+.about-page .about-ideology + .about-block {
+  border-top: none;
+}
+
 /* Section label: the same tracked uppercase micro-type as the project meta
    and the hero slide counter. */
 .about-eyebrow {
@@ -132,7 +168,9 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
-  gap: clamp(1.5rem, 4vw, 4rem);
+  /* columns only: a row gap on top of the quote's own margin left the
+     paragraph ~100px adrift from the quote it explains */
+  gap: 0 clamp(1.5rem, 4vw, 4rem);
   align-items: start;
 }
 
@@ -223,6 +261,8 @@
   font-weight: 500;
   letter-spacing: -0.02em;
   margin-bottom: 2rem;
+  /* even lines instead of "life?" alone on the second line on phones */
+  text-wrap: balance;
 }
 
 /* --- Narrow screens --------------------------------------------------- */
@@ -236,6 +276,11 @@
   .about-ideology-quote,
   .about-ideology-text {
     grid-column: 1;
+  }
+
+  /* single column: the label and the quote are now stacked rows */
+  .about-ideology .about-eyebrow {
+    margin-bottom: 1.5rem;
   }
 
   .about-eyebrow-num {

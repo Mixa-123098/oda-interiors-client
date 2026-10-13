@@ -165,12 +165,15 @@ const AboutPage = () => {
       <PagesHeader title={t("aboutPage.aboutUs")} />
 
       <OurStory />
-      {/* Same credibility strip as the home page - one set of facts, stated
-          once, rather than a second wording of the same claims. */}
-      <TrustBar />
+      {/* Team straight after the story: on the first screen the portraits
+          start under the text, cut by the bottom edge - the cue that the page
+          goes on. The trust strip closes the page before the CTA, which is
+          what it was designed for (it used to sit second and its bottom rule
+          read as the end of the page). */}
       <OurTeam />
       <Ideology />
       <Values />
+      <TrustBar />
       <AboutCta />
 
       <Footer settings={{ color: `black`, bgColor: `white`, shadow: true }} />

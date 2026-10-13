@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import authStore from "../store/authStore";
 import logo from "../assets/logo-header.png";
@@ -8,9 +8,21 @@ import ScrollToTop from "../custom-hooks/ScrollToTop";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "./LanguageSelector";
 
+// First URL segment -> nav label; shown as the section title in the mobile
+// header, where the menu itself is folded away behind the hamburger.
+const SECTION_KEYS = {
+  projects: "navbar.projectsPage",
+  map: "navbar.mapPage",
+  about: "navbar.aboutPage",
+  contacts: "navbar.contactsPage",
+  price: "navbar.pricesPage",
+  edit: "navbar.editPage",
+};
+
 const Navbar = observer(({ fontColor, rep }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { isAuthenticated, isStaff } = authStore;
   const navbarItemsList = [
     t("navbar.mainPage"),
@@ -47,16 +59,21 @@ const Navbar = observer(({ fontColor, rep }) => {
     );
   }
 
+  // NavLink marks the current page (.active + aria-current="page"); "end"
+  // keeps Home from matching every route, while /projects/:id still lights
+  // up "Projects".
   const navbar = navbarItemsList.map((item, index) => {
+    const way = navbarItemsWays[index].trim();
     return (
-      <Link
+      <NavLink
         key={index}
-        to={`/${navbarItemsWays[index]}`}
+        to={`/${way}`}
+        end={way === ""}
         className="nav-link nav-styles"
         onClick={ScrollToTop}
       >
         <h6 style={{ color: fontColor }}>{navbarItemsList[index]}</h6>
-      </Link>
+      </NavLink>
     );
   });
 
@@ -66,13 +83,22 @@ const Navbar = observer(({ fontColor, rep }) => {
     navigate("/login");
   };
 
-  const hamburgerMenu = navbarItemsList.map((item, index) => (
-    <li key={index}>
-      <a className="menu__item" href={`/${navbarItemsWays[index]}`}>
-        {item}
-      </a>
-    </li>
-  ));
+  const currentSection = pathname.split("/")[1];
+  const hamburgerMenu = navbarItemsList.map((item, index) => {
+    const way = navbarItemsWays[index].trim();
+    const current = way === currentSection;
+    return (
+      <li key={index}>
+        <a
+          className={`menu__item${current ? " active" : ""}`}
+          href={`/${way}`}
+          aria-current={current ? "page" : undefined}
+        >
+          {item}
+        </a>
+      </li>
+    );
+  });
   // console.log(isAuthenticated);
   return (
     <>
@@ -122,6 +148,9 @@ const Navbar = observer(({ fontColor, rep }) => {
 });
 
 function Header({ fontColor, invert, rep }) {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const sectionKey = SECTION_KEYS[pathname.split("/")[1]];
   const [scroll, setScroll] = useState(0);
   const [hidden, setHidden] = useState(false);
   let opacity;
@@ -194,6 +223,14 @@ function Header({ fontColor, invert, rep }) {
               }}
             />
           </Link>
+          {sectionKey ? (
+            <span
+              className="header-section"
+              style={{ color: rep || scroll === 0 ? fontColor : `white` }}
+            >
+              {t(sectionKey)}
+            </span>
+          ) : null}
           <Navbar
             fontColor={rep || scroll === 0 ? fontColor : `white`}
             rep={rep}

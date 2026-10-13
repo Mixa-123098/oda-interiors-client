@@ -87,6 +87,14 @@ h4 {
   align-items: center;
 }
 
+/* Title hidden (see PagesHeader.jsx): the block only clears the fixed header,
+   plus a little air so the content doesn't touch it. */
+.pages-header--quiet {
+  box-shadow: none;
+  padding-top: calc(max(var(--headerHeight), var(--headerMinHeight)) + 1.5rem);
+  padding-bottom: 0;
+}
+
 /* Header */
 .header {
   position: fixed;
@@ -227,18 +235,55 @@ video {
   margin-left: 10vw;
 }
 
-.textPage {
-  margin-left: 5vw;
+/* Home hero only: title and link centred across the width (same height as
+   before). .header-text is shared with the project page hero, which stays
+   left-aligned. .d-flex on the element is what justify-content acts on. */
+.header-content .header-text {
+  margin-left: 0;
+  padding: 0 1.5rem;
+  justify-content: center;
+  text-align: center;
 }
 
-.countPage {
-  font-size: clamp(1rem, 1.5vw + 1.5vh, 10rem);
+.header-content .titlePage {
+  text-wrap: balance;
+  /* Only a hairline of shadow to keep the strokes crisp on bright points -
+     a wide 24px cloud thickened the thin Playfair strokes and made the title
+     read heavy. The ellipse behind (.main > .overlay::after) does the work. */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.bigger-text {
-  font-size: clamp(1rem, 2.5vw + 2.5vh, 10rem);
-  position: relative;
-  top: clamp(0rem, 1vw + 1vh, 10rem);
+.header-content .subtitlePage a {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Home hero chrome over the video (before the header turns into the light
+   glass bar on scroll): the same hairline shadow as the hero title, so the
+   white nav and language toggle hold up on bright frames. */
+.header:not(.header--light):not(.header--glass) .nav-styles h6,
+.header:not(.header--light):not(.header--glass) .language-selector {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Home hero: the base scrim is lightest at ~30% height - exactly where the
+   centred title sits. A soft dark ellipse behind the text only, fading into
+   the footage, so the edges of the video keep their brightness.
+   --hero-text-y follows the title's vertical position (see .header-text). */
+.main > .overlay {
+  --hero-text-y: calc(max(15vw, 175px) + 3.5rem);
+}
+
+.main > .overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    min(34rem, 48vw) 11rem at 50% var(--hero-text-y),
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.32) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
 }
 
 .titlePage {
@@ -306,7 +351,8 @@ video {
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .nav-styles:hover h6::after,
-.nav-styles:focus-visible h6::after {
+.nav-styles:focus-visible h6::after,
+.nav-styles.active h6::after {
   transform: scaleX(1);
   transform-origin: left;
 }
@@ -321,6 +367,23 @@ video {
 
 .navbar-hamburger {
   display: none;
+}
+
+.header-section {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
 }
 
 .navbar-background {}
@@ -437,6 +500,11 @@ video {
   text-decoration: none;
   transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
+.menu__item.active {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
 .menu__item:hover {
   color: var(--mainColor);
   /* was font-size:1.5em, which reflowed the whole menu on every hover */
@@ -523,7 +591,8 @@ video {
 /* Slide control. Was 1.2rem/600 numerals that grew to 1.4rem when active -
    heavy for a hero, and the size change reflowed the row on every slide.
    Small tracked numerals with the drawn-in underline already used by the
-   /projects tabs; the big 01/03 counter above stays the position readout. */
+   /projects tabs. This is the only position readout - the big 01/03 counter
+   that used to sit by the hero title duplicated it and was removed. */
 .block_elem {
   position: relative;
   padding: 10px 0 12px;
@@ -535,8 +604,11 @@ video {
   font-weight: 500;
   letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
-  opacity: 0.5;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+  /* 0.5 sank into the footage; the active one still stands out at 1 with its
+     underline. Hairline shadow, same as the hero title - a wide halo only
+     smudged these small numerals. */
+  opacity: 0.75;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition: opacity 0.25s ease;
 }
@@ -564,7 +636,7 @@ video {
 }
 
 .block_elem:hover {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .block_elem:focus-visible {
@@ -606,8 +678,9 @@ video {
 .social-icon-link {
   color: var(--mainColor);
   font-size: 1.05rem;
-  opacity: 0.65;
-  filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.3));
+  /* was 0.65 - secondary, but it read as disabled over the video */
+  opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
   transition: opacity 0.2s, transform 0.2s;
 }
 
@@ -679,6 +752,12 @@ footer {
     display: block;
   }
 
+  /* Section title in the mobile header (the menu is folded away here, so this
+     answers "where am I"); centred like an iOS nav bar title. */
+  .header-section {
+    display: block;
+  }
+
   .projects-img {
     position: relative;
     bottom: 50%;
@@ -722,19 +801,24 @@ footer {
      (#mobile-critique). ProjectHeader keeps the base margin-top:max(15vw,175px). */
   .header-content .header-text {
     margin-top: 0;
-    margin-left: 7vw;
   }
 
-  .textPage {
-    margin-left: 4vw;
+  /* text is flex-centred above 12vh of bottom padding here */
+  .main > .overlay {
+    --hero-text-y: 44%;
+  }
+
+  .main > .overlay::after {
+    background: radial-gradient(
+      48vw 10rem at 50% var(--hero-text-y),
+      rgba(0, 0, 0, 0.42) 0%,
+      rgba(0, 0, 0, 0.26) 45%,
+      rgba(0, 0, 0, 0) 100%
+    );
   }
 
   .titlePage {
     font-size: clamp(1.7rem, 6.8vw, 2.6rem);
-  }
-
-  .countPage {
-    font-size: clamp(0.9rem, 3.6vw, 1.3rem);
   }
 
   .bottomHeader {
