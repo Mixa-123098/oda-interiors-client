@@ -114,10 +114,10 @@ const Projects = ({ indexFromSecBlock }) => {
   const [focusedIndex, setFocusedIndex] = useState(index);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Keep this EVEN: the grid is two columns, and 9 (a leftover from the old
-  // three-column mosaic) left the last row of every page half empty. 10 is
-  // five full rows - a substantial page without an endless scroll.
-  const itemsPerPage = 10;
+  // Keep this a multiple of 6: the grid is three columns on wide screens and
+  // two below 1100px (one on phones), and 12 fills the last row at every
+  // width - 10 left a lone card in three columns.
+  const itemsPerPage = 12;
 
   // Paging swaps the cards in place, so without this the visitor is left at
   // the bottom of the page looking at the pagination row while the new page's
