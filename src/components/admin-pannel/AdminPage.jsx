@@ -103,29 +103,38 @@ const AdminPage = observer(() => {
     return <Loader />;
   }
 
-  const ActiveComponent = (
-    tabs.find((tab) => tab.key === activeTab) || tabs[0]
-  ).Component;
+  // activeTab starts out undefined: the initial state is computed before the
+  // user (and so the role-filtered tab list) has loaded. Highlight whichever
+  // tab is actually shown, not just the state value.
+  const currentTab = tabs.find((tab) => tab.key === activeTab) || tabs[0];
+  const ActiveComponent = currentTab.Component;
 
   return (
     <>
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
-      <PagesHeader title={t("editPage.adminPanel")} showTitle />
+      {/* Title hidden like on the public pages: the "Edit" nav item is
+          highlighted and the mobile header names the section. */}
+      <PagesHeader title={t("editPage.adminPanel")} />
 
-      <div className="container mt-5">
-        <ul className="nav nav-tabs admin-tabs flex-wrap">
-          {tabs.map((tab) => (
-            <li className="nav-item" key={tab.key}>
-              <button
-                type="button"
-                className={`nav-link${activeTab === tab.key ? " active" : ""}`}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label}
-              </button>
-            </li>
-          ))}
-        </ul>
+      {/* Sidebar menu on the left, the working area takes the rest of the
+          width (was a row of tabs above the content). */}
+      <div className="admin-layout">
+        <nav className="admin-sidebar" aria-label={t("editPage.adminPanel")}>
+          <ul className="nav admin-tabs">
+            {tabs.map((tab) => (
+              <li className="nav-item" key={tab.key}>
+                <button
+                  type="button"
+                  className={`nav-link${currentTab.key === tab.key ? " active" : ""}`}
+                  aria-current={currentTab.key === tab.key ? "page" : undefined}
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  {tab.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="admin-tab-content">
           <ActiveComponent />
