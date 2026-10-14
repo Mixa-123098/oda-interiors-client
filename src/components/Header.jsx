@@ -224,7 +224,7 @@ function Header({ fontColor, invert, rep }) {
           <Link to="/" onClick={ScrollToTop}>
             <img
               src={logo}
-              alt="ODA"
+              alt="ODA Interiors"
               className="header-logo"
               style={{
                 filter: rep || scroll === 0 ? invert : `invert(100%)`,

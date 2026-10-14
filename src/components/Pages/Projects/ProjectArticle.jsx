@@ -562,6 +562,26 @@ const ProjectArticle = observer(() => {
   // a project by the studio, with its photo and place.
   const pagePath = resolvedDataList && `/projects/${resolvedDataList.id}`;
   const textOr = (key, fallback) => (t(key) !== key ? t(key) : fallback || "").trim();
+
+  // "Townhouse, Kyiv — Interior Design by ODA Interiors"; the city is left
+  // out when the name already says it ("Apartment in the Historic Part of
+  // Dnipro"; compared by stem, since names decline it: Дніпро/Дніпра).
+  const seoCity =
+    resolvedDataList &&
+    textOr(`projects.project${resolvedDataList.id}.city`, resolvedDataList.project_city);
+  const cityStem = (seoCity || "").toLowerCase().slice(0, Math.max(4, (seoCity || "").length - 2));
+  const pageTitle =
+    seoTitle &&
+    (seoCity && !seoTitle.toLowerCase().includes(cityStem)
+      ? t("seo.project.titleWithCity", {
+          name: seoTitle,
+          city: seoCity,
+          defaultValue: "{{name}}, {{city}} — Interior Design by ODA Interiors",
+        })
+      : t("seo.project.title", {
+          name: seoTitle,
+          defaultValue: "{{name}} — Interior Design by ODA Interiors",
+        }));
   const jsonLd = resolvedDataList && {
     "@context": "https://schema.org",
     "@graph": [
@@ -592,10 +612,7 @@ const ProjectArticle = observer(() => {
           "@type": "Place",
           address: {
             "@type": "PostalAddress",
-            addressLocality: textOr(
-              `projects.project${resolvedDataList.id}.city`,
-              resolvedDataList.project_city
-            ),
+            addressLocality: seoCity,
             addressCountry: textOr(
               `projects.project${resolvedDataList.id}.country`,
               resolvedDataList.project_country
@@ -613,7 +630,7 @@ const ProjectArticle = observer(() => {
   return (
     <>
       <Seo
-        title={seoTitle}
+        completeTitle={pageTitle}
         description={seoDescription}
         image={seoImage}
         languages={projectLanguages}

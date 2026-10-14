@@ -1,4 +1,4 @@
-/* Text sections on the home page (FirstBlok/ForthBlock/FifthBlock/SixBlock).
+/* Text sections on the home page (FirstBlok, FifthBlock).
    These used to be a min-height:100vh box (125vh on phones) with the content
    absolutely centred via top/left:50% + translate - so each short section was
    a screen or more of mostly empty space, and the page ran to ~18 phone

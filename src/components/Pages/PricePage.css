@@ -58,6 +58,105 @@
   color: var(--notMainColor);
 }
 
+/* What's included / supervision / timeline / FAQ - the same column as the
+   price rows, numbered ruled rows like the About page's values. */
+.price-page .price-details {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.price-page .price-section {
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.price-page .price-section-title {
+  font-size: clamp(1.5rem, 1.25rem + 1vw, 2.1rem);
+  letter-spacing: -0.01em;
+  margin-bottom: 1.5rem;
+}
+
+.price-page .price-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.price-page .price-step {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 0 clamp(1rem, 2vw, 2rem);
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.price-page .price-step:last-child {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.price-page .price-step-num {
+  grid-row: 1 / span 2;
+  padding-top: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--notMainColor);
+}
+
+.price-page .price-step-title {
+  margin: 0;
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
+}
+
+.price-page .price-step-text,
+.price-page .price-faq-a {
+  margin: 0.4rem 0 0;
+  color: var(--notMainColor);
+  line-height: 1.6;
+}
+
+/* Supervision and timeline: label over text, between rules. */
+.price-page .price-facts {
+  margin: 0;
+}
+
+.price-page .price-fact {
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.price-page .price-fact:last-child {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.price-page .price-fact dt {
+  margin-bottom: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--notMainColor);
+}
+
+.price-page .price-fact dd {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.price-page .price-faq-item {
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.price-page .price-faq-item:last-child {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.price-page .price-faq-q {
+  margin: 0;
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.25rem);
+}
+
 @media (max-width: 576px) {
   .price-page .price-row {
     flex-direction: column;

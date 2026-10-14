@@ -26,7 +26,9 @@ import { dbLangFromPath } from "./lib/lang";
 //   v8 - seo.* titles/descriptions per language, admin language-address
 //        strings, missing keys filled in for admin-added languages
 //   v9 - gallery.photo ("photo {{n}}") for per-photo alt texts
-const CACHE_VERSION = "v9";
+//   v10 - "ODA Interiors" SEO titles, new home intro, price page details,
+//         project briefs, one spelling of the team's names
+const CACHE_VERSION = "v10";
 
 i18n
   .use(ChainedBackend)

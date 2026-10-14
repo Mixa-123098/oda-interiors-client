@@ -39,9 +39,7 @@ import Seo from "./components/Seo";
 // statically instead; lazy() is kept below only for off-route pages.
 import FirstBlok from "./components/Bloks/FirstBlok";
 import SecondBlock from "./components/Bloks/SecondBlock";
-import SixBlock from "./components/Bloks/SixBlock";
 import FeaturedProjects from "./components/Bloks/FeaturedProjects";
-import ForthBlock from "./components/Bloks/ForthBlock";
 import FifthBlock from "./components/Bloks/FifthBlock";
 import MainCta from "./components/MainCta";
 import TrustBar from "./components/TrustBar";
@@ -132,8 +130,6 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
         <FirstBlok />
         <FeaturedProjects />
         <SecondBlock updateIndexFromSecBlock={updateIndexFromSecBlock} />
-        <SixBlock />
-        <ForthBlock />
         <FifthBlock />
         <TrustBar />
         <MainCta />
