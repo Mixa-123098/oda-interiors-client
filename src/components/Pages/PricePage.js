@@ -3,7 +3,7 @@ import Header from "../Header";
 import PagesHeader from "./PagesHeader";
 import Footer from "../Footer";
 import Seo from "../Seo";
-import { Link } from "react-router-dom";
+import { Link } from "../LocalizedLink";
 import ScrollToTop from "../../custom-hooks/ScrollToTop";
 import "../../App.css";
 import "./PricePage.css";
@@ -31,8 +31,8 @@ const PricePage = () => {
   return (
     <div className="price-page">
       <Seo
-        title="Prices"
-        description="Pricing for interior design and architecture services from ODA, a studio based in Ukraine and working worldwide."
+        title={t("seo.price.title")}
+        description={t("seo.price.description")}
       />
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
       <PagesHeader title={t("pricesPage.ourPrices")} />

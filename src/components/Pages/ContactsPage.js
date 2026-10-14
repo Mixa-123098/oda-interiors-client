@@ -124,8 +124,8 @@ const ContactsPage = () => {
   return (
     <div className="contacts-page">
       <Seo
-        title="Contacts"
-        description="Get in touch with ODA, an interior design and architecture studio based in Ukraine and working worldwide."
+        title={t("seo.contacts.title")}
+        description={t("seo.contacts.description")}
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
       <PagesHeader title={t("contactsPage.contacts")} />

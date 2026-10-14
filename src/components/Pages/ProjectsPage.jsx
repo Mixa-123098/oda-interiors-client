@@ -1,7 +1,7 @@
 import ResponsiveImg from "../ResponsiveImg";
 import React from "react";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "../LocalizedLink";
 import "./ProjectsPage.css";
 
 import Header from "../Header";
@@ -41,7 +41,7 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
         // id={index} used to put id="0", id="1" ... on these wrappers - no one
         // referenced them and two lists on one page would collide.
         <article key={element.id} className="project-card">
-          <Link to={`/projects/${element.id} `} className="project-card-link">
+          <Link to={`/projects/${element.id}`} className="project-card-link">
             <div className="project-thumb-wrap">
               <ResponsiveImg
                 file={element.project_img_src}
@@ -289,8 +289,8 @@ const ProjectsPage = ({ indexFromSecBlock }) => {
   return (
     <div className="projects">
       <Seo
-        title="Our Projects"
-        description="Browse ODA's portfolio of apartment, private house, and public interior design projects around the world."
+        title={t("seo.projects.title")}
+        description={t("seo.projects.description")}
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
       <PagesHeader title={t("projectsPage.ourProjects")} />

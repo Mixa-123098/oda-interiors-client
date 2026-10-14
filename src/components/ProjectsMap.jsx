@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useLang from "../lib/useLang";
 import { useTranslation } from "react-i18next";
 import maplibregl, { MAP_STYLES } from "../lib/maplibre";
 import { API_URL } from "../config/api";
@@ -27,6 +28,7 @@ const localized = (p, lang, field) =>
 const ProjectsMap = ({ variant = "light", height = 320, interactive = false }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { lp } = useLang();
   const nodeRef = useRef(null);
   const [projects, setProjects] = useState(null);
 
@@ -91,12 +93,12 @@ const ProjectsMap = ({ variant = "light", height = 320, interactive = false }) =
       box.appendChild(place);
       for (const p of g.items) {
         const a = document.createElement("a");
-        a.href = `/projects/${p.id}`;
+        a.href = lp(`/projects/${p.id}`);
         a.className = "pmap-popup-link";
         a.textContent = localized(p, lang, "name");
         a.addEventListener("click", (e) => {
           e.preventDefault();
-          navigate(`/projects/${p.id}`);
+          navigate(lp(`/projects/${p.id}`));
           window.scrollTo(0, 0);
         });
         box.appendChild(a);
@@ -130,7 +132,7 @@ const ProjectsMap = ({ variant = "light", height = 320, interactive = false }) =
       ro.disconnect();
       map.remove();
     };
-  }, [projects, hasPoints, variant, interactive, i18n.language, navigate]);
+  }, [projects, hasPoints, variant, interactive, i18n.language, navigate, lp]);
 
   if (projects && projects.length === 0) return null;
 

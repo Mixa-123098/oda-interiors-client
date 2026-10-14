@@ -1,8 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import useLang from "../lib/useLang";
 
 const HeaderText = ({ count }) => {
   const { t } = useTranslation();
+  const { lp } = useLang();
 
   const titlePage = [
     t("mainPage.projects.loft"),
@@ -30,7 +32,7 @@ const HeaderText = ({ count }) => {
         <div className="titlePage">{titlePage[count - 1]}</div>
         <div className="subtitlePage">
           <a
-            href={subtitlePage[count - 1].link}
+            href={lp(subtitlePage[count - 1].link)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-light"

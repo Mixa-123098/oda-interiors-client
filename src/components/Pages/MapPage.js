@@ -24,7 +24,7 @@ const MapPage = () => {
     <div className="map-page">
       <Seo
         title={t("mapPage.title")}
-        description="Map of completed interior design and architecture projects by ODA."
+        description={t("seo.map.description")}
       />
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
       <PagesHeader title={t("mapPage.title")} />

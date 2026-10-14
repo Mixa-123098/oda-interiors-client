@@ -6,7 +6,7 @@ import Footer from "../Footer";
 import Seo from "../Seo";
 import TrustBar from "../TrustBar";
 import ResponsiveImg from "../ResponsiveImg";
-import { Link } from "react-router-dom";
+import { Link } from "../LocalizedLink";
 import ScrollToTop from "../../custom-hooks/ScrollToTop";
 import { useTranslation } from "react-i18next";
 
@@ -158,8 +158,8 @@ const AboutPage = () => {
   return (
     <div className="about-page">
       <Seo
-        title="About Us"
-        description="Meet the ODA team — architects and interior designers based in Ukraine and working worldwide, with over 20 years of combined experience."
+        title={t("seo.about.title")}
+        description={t("seo.about.description")}
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
       <PagesHeader title={t("aboutPage.aboutUs")} />

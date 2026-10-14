@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import useLang from "../../lib/useLang";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/authStore";
 import "./RegistrationForm.css";
@@ -11,6 +13,7 @@ import { useTranslation } from "react-i18next";
 const AuthForm = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { lp } = useLang();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -19,9 +22,9 @@ const AuthForm = observer(() => {
 
   useEffect(() => {
     if (authStore.isAuthenticated) {
-      navigate("/edit");
+      navigate(lp("/edit"));
     }
-  }, [navigate]);
+  }, [navigate, lp]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,7 +40,7 @@ const AuthForm = observer(() => {
     const { username, password } = formData;
     try {
       await authStore.login(username, password);
-      navigate("/edit");
+      navigate(lp("/edit"));
     } catch (error) {
       if (error.message === "user_not_found") {
         alert(t("authForm.feedbacks.userNotFound"));
@@ -49,6 +52,10 @@ const AuthForm = observer(() => {
 
   return (
     <div className="reg-auth">
+      {/* Staff-only page: keep it (and its /uk/login etc. copies) out of search. */}
+      <Helmet>
+        <meta name="robots" content="noindex" />
+      </Helmet>
       <form className="reg-auth-form" onSubmit={handleSubmit}>
         <h2 className="reg-auth-title">{t("authForm.auth")}</h2>
 
@@ -84,7 +91,7 @@ const AuthForm = observer(() => {
         <button
           type="button"
           className="reg-auth-home"
-          onClick={() => navigate("/")}
+          onClick={() => navigate(lp("/"))}
         >
           {t("authForm.toTheHomePage")}
         </button>

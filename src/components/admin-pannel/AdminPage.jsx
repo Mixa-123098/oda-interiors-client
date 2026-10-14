@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import useLang from "../../lib/useLang";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/authStore";
 import Header from "../Header";
@@ -61,6 +63,7 @@ const AdminPage = observer(() => {
   const role = user?.role;
   const hasPanelAccess = role === "admin" || role === "moderator";
   const navigate = useNavigate();
+  const { lp } = useLang();
 
   const tabs = ALL_TABS.filter((tab) => tab.roles.includes(role)).map(
     (tab) => ({ ...tab, label: t(tab.labelKey) })
@@ -68,29 +71,42 @@ const AdminPage = observer(() => {
 
   const [activeTab, setActiveTab] = useState(() => tabs[0]?.key);
 
+  // Staff-only page: keep it (and its /uk/edit etc. copies) out of search.
+  const noindex = (
+    <Helmet>
+      <meta name="robots" content="noindex" />
+    </Helmet>
+  );
+
   // Non-staff normally have nowhere to go in the admin panel — but if they
   // were just password-reset, they still need to land here long enough to
   // change it, so the redirect is held off until that's resolved.
   useEffect(() => {
     if (isReady && !hasPanelAccess && !mustChangePassword) {
-      navigate("/");
+      navigate(lp("/"));
     }
-  }, [navigate, isReady, hasPanelAccess, mustChangePassword]);
+  }, [navigate, lp, isReady, hasPanelAccess, mustChangePassword]);
 
   if (!isReady) {
-    return <Loader />;
+    return (
+      <>
+        {noindex}
+        <Loader />
+      </>
+    );
   }
 
   if (mustChangePassword) {
     return (
       <>
+        {noindex}
         <Header fontColor="#000000" invert="invert(0%)" rep={true} />
         <PagesHeader title={t("editPage.changePassword.title")} showTitle />
         <div className="container mt-5 mb-5">
           <p className="text-muted">{t("editPage.changePassword.forcedHint")}</p>
           <ChangePasswordForm
             onSuccess={() => {
-              if (!hasPanelAccess) navigate("/");
+              if (!hasPanelAccess) navigate(lp("/"));
             }}
           />
         </div>
@@ -100,7 +116,12 @@ const AdminPage = observer(() => {
   }
 
   if (!hasPanelAccess) {
-    return <Loader />;
+    return (
+      <>
+        {noindex}
+        <Loader />
+      </>
+    );
   }
 
   // activeTab starts out undefined: the initial state is computed before the
@@ -111,6 +132,7 @@ const AdminPage = observer(() => {
 
   return (
     <>
+      {noindex}
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
       {/* Title hidden like on the public pages: the "Edit" nav item is
           highlighted and the mobile header names the section. */}

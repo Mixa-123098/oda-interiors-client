@@ -1,30 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 import languagesStore from "../store/languagesStore";
+import useLang from "../lib/useLang";
+import { localizePath, saveLang } from "../lib/lang";
 
 // color: text colour for the header context (dark on light pages, white on
 // hero photos) - the same value the nav links get.
+//
+// The language is part of the address (/uk/about), so choosing one opens the
+// same page at its address in that language; App.js (LanguageSync) then
+// switches i18n to follow the URL.
 const LanguageSelector = observer(({ color }) => {
-  const { i18n } = useTranslation();
+  const { lang, basePath } = useLang();
+  const { search, hash } = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [language, setLanguage] = useState(
-    () => localStorage.getItem("language") || i18n.language
-  );
   const ref = useRef(null);
 
   useEffect(() => {
     languagesStore.fetchLanguages();
   }, []);
-
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage && savedLanguage !== i18n.language) {
-      i18n.changeLanguage(savedLanguage).catch((error) => {
-        console.error("Error initializing language:", error);
-      });
-    }
-  }, [i18n]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -36,17 +32,11 @@ const LanguageSelector = observer(({ color }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const changeLanguage = (lang) => {
-    i18n
-      .changeLanguage(lang)
-      .then(() => {
-        setLanguage(lang);
-        localStorage.setItem("language", lang);
-        setIsOpen(false);
-      })
-      .catch((error) => {
-        console.error("Error changing language:", error);
-      });
+  const changeLanguage = (code) => {
+    setIsOpen(false);
+    if (code === lang) return;
+    saveLang(code);
+    navigate(localizePath(basePath, code) + search + hash);
   };
 
   return (
@@ -58,7 +48,7 @@ const LanguageSelector = observer(({ color }) => {
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        {language.toUpperCase()}
+        {lang.toUpperCase()}
         <svg
           className={`language-selector-caret${isOpen ? " open" : ""}`}
           viewBox="0 0 10 6"
@@ -74,16 +64,16 @@ const LanguageSelector = observer(({ color }) => {
       </button>
       {isOpen && (
         <ul className="language-selector-menu">
-          {languagesStore.languages.map((lang) => (
-            <li key={lang.code}>
+          {languagesStore.languages.map((l) => (
+            <li key={l.code}>
               <button
                 type="button"
                 className={`language-selector-option${
-                  lang.code === language ? " active" : ""
+                  l.code === lang ? " active" : ""
                 }`}
-                onClick={() => changeLanguage(lang.code)}
+                onClick={() => changeLanguage(l.code)}
               >
-                {lang.code.toUpperCase()}
+                {l.code.toUpperCase()}
               </button>
             </li>
           ))}

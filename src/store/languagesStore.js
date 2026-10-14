@@ -9,6 +9,9 @@ class LanguagesStore {
   ];
   isLoading = false;
   hasFetched = false;
+  // True once the first fetch has finished, successfully or not - lets
+  // callers wait for the real list without waiting forever on a failure.
+  settled = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -34,6 +37,7 @@ class LanguagesStore {
     } finally {
       runInAction(() => {
         this.isLoading = false;
+        this.settled = true;
       });
     }
   }

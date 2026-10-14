@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "../LocalizedLink";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import Header from "../Header";

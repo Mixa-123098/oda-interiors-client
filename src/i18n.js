@@ -4,6 +4,7 @@ import ChainedBackend from "i18next-chained-backend";
 import HttpBackend from "i18next-http-backend";
 import LocalStorageBackend from "i18next-localstorage-backend";
 import { API_URL } from "./config/api";
+import { dbLangFromPath } from "./lib/lang";
 
 // All UI copy — built-in languages (ua/en/sk) included — now lives in
 // languages.ui_translations in the DB, seeded once from the old static
@@ -22,14 +23,19 @@ import { API_URL } from "./config/api";
 //   v5 - "Kyiv · Dnipro / cities we work in" -> "Worldwide"
 //   v6 - About page values list condensed to one line each
 //   v7 - About page story rewritten (was about building the website)
-const CACHE_VERSION = "v7";
+//   v8 - seo.* titles/descriptions per language, admin language-address
+//        strings, missing keys filled in for admin-added languages
+const CACHE_VERSION = "v8";
 
 i18n
   .use(ChainedBackend)
   .use(initReactI18next) // Makes i18n work with React
   .init({
     fallbackLng: "en",
-    lng: "en",
+    // The URL decides the language (/uk/about is Ukrainian), so a page loads
+    // straight in its own language; LanguageSync in App.js follows later
+    // navigation.
+    lng: typeof window !== "undefined" ? dbLangFromPath(window.location.pathname) : "en",
     backend: {
       backends: [LocalStorageBackend, HttpBackend],
       backendOptions: [

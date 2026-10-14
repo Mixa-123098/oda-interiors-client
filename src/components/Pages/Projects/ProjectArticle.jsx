@@ -2,7 +2,9 @@ import ResponsiveImg from "../../ResponsiveImg";
 import ScrollHint from "../../ScrollHint";
 import Lightbox from "../../Lightbox";
 import React from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "../../LocalizedLink";
+import useLang from "../../../lib/useLang";
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import "./ProjectArticle.css";
@@ -401,6 +403,7 @@ const ProjectArticle = observer(() => {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { lp } = useLang();
   const [loading, setLoading] = useState(true);
   const [dataList, setDataList] = useState();
   const [translation, setTranslation] = useState(null);
@@ -485,9 +488,9 @@ const ProjectArticle = observer(() => {
 
   useEffect(() => {
     if (notAvailable) {
-      navigate("/projects");
+      navigate(lp("/projects"));
     }
-  }, [notAvailable, navigate]);
+  }, [notAvailable, navigate, lp]);
 
   // On phones, the header image is also 100vh, which the mobile browser
   // resizes as its address bar hides/shows mid-scroll - combined with the
@@ -532,12 +535,23 @@ const ProjectArticle = observer(() => {
     resolvedDataList?.project_header_img &&
     `https://oda-interiors.com/img/main_imges_folder/${resolvedDataList.project_header_img}`;
 
+  // The languages this project can be read in: its own plus every
+  // translation (GET /projects lists them) - hreflang must not point at a
+  // version that only redirects back to the list.
+  const projectLanguages =
+    dataList && [dataList.source_lang, ...(dataList.translated_langs || [])];
+
   const isStaff =
     authStore.user?.role === "admin" || authStore.user?.role === "moderator";
 
   return (
     <>
-      <Seo title={seoTitle} description={seoDescription} image={seoImage} />
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        image={seoImage}
+        languages={projectLanguages}
+      />
       {isStaff && resolvedDataList?.is_hidden && (
         <div
           className="alert alert-warning text-center mb-0 rounded-0"

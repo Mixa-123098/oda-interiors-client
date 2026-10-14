@@ -1,6 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Link, NavLink } from "./LocalizedLink";
+import useLang from "../lib/useLang";
 import { observer } from "mobx-react-lite";
 import authStore from "../store/authStore";
 import logo from "../assets/logo-header.png";
@@ -22,7 +24,9 @@ const SECTION_KEYS = {
 const Navbar = observer(({ fontColor, rep }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  // basePath: the address without its language prefix ("/uk/projects" ->
+  // "/projects"); lp puts a path back into the current language.
+  const { basePath, lp } = useLang();
   const { isAuthenticated, isStaff } = authStore;
   const navbarItemsList = [
     t("navbar.mainPage"),
@@ -80,10 +84,10 @@ const Navbar = observer(({ fontColor, rep }) => {
   const handleLogout = async (e) => {
     await authStore.logout();
 
-    navigate("/login");
+    navigate(lp("/login"));
   };
 
-  const currentSection = pathname.split("/")[1];
+  const currentSection = basePath.split("/")[1];
   const hamburgerMenu = navbarItemsList.map((item, index) => {
     const way = navbarItemsWays[index].trim();
     const current = way === currentSection;
@@ -91,7 +95,7 @@ const Navbar = observer(({ fontColor, rep }) => {
       <li key={index}>
         <a
           className={`menu__item${current ? " active" : ""}`}
-          href={`/${way}`}
+          href={lp(`/${way}`)}
           aria-current={current ? "page" : undefined}
         >
           {item}
@@ -149,8 +153,8 @@ const Navbar = observer(({ fontColor, rep }) => {
 
 function Header({ fontColor, invert, rep }) {
   const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const sectionKey = SECTION_KEYS[pathname.split("/")[1]];
+  const { basePath } = useLang();
+  const sectionKey = SECTION_KEYS[basePath.split("/")[1]];
   const [scroll, setScroll] = useState(0);
   const [hidden, setHidden] = useState(false);
   let opacity;

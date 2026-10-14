@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "./LocalizedLink";
 import { useTranslation } from "react-i18next";
 import ScrollToTop from "../custom-hooks/ScrollToTop";
 import "./Footer.css";
