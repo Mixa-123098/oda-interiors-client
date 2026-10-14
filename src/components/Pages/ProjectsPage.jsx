@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "i18next"; // i18n для определения языка
 import { API_URL } from "../../config/api";
 
-const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, categoryLabels }) => {
+const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, categoryLabels, loading }) => {
   const { t } = useTranslation();
   const startIndex = (focusedPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -78,7 +78,7 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
     });
 
   return (
-    <div className="projects-container">
+    <div className={`projects-container${loading ? " projects-container--loading" : ""}`}>
       <div className="our-projects">{renderedData}</div>
     </div>
   );
@@ -87,20 +87,24 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
 const Projects = ({ indexFromSecBlock }) => {
   const [dataList, setDataList] = useState([]);
   const [translations, setTranslations] = useState([]);
+  // Both lists are needed before a card can show (projects without a
+  // translation into the current language are filtered out).
+  const [loaded, setLoaded] = useState(false);
   const index = indexFromSecBlock || 0;
   useEffect(() => {
-    fetch(`${API_URL}/projects`, { credentials: "include" })
+    const projects = fetch(`${API_URL}/projects`, { credentials: "include" })
       .then((response) => response.json())
       .then((data) => setDataList(data))
       .catch((error) => {
         console.error("Ошибка получения данных:", error);
       });
-    fetch(`${API_URL}/project_translations`, { credentials: "include" })
+    const projectTranslations = fetch(`${API_URL}/project_translations`, { credentials: "include" })
       .then((response) => response.json())
       .then((data) => setTranslations(data))
       .catch((error) => {
         console.error("Ошибка получения переводов:", error);
       });
+    Promise.all([projects, projectTranslations]).then(() => setLoaded(true));
   }, []);
   const { t } = useTranslation();
   const categoriesList = [
@@ -211,6 +215,7 @@ const Projects = ({ indexFromSecBlock }) => {
         dataList={dataList}
         translations={translations}
         categoryLabels={categoriesList}
+        loading={!loaded}
       />
       <ProjectsPagesNav
         setFocusedPage={setCurrentPage}

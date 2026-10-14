@@ -20,11 +20,17 @@ const LazyProjectsMap = (props) => {
     let timer;
     const io = new IntersectionObserver(
       ([entry]) => {
+        clearTimeout(timer);
         if (entry.isIntersecting) {
-          io.disconnect();
           // Short pages (e.g. a list that is still loading) have the footer
-          // in view immediately; give the real content a head start.
-          timer = setTimeout(() => setNear(true), 1500);
+          // in view immediately; give the real content a head start, and
+          // only mount if the footer is still near the screen by then - on
+          // /projects the cards arrive and push it a screen down, and the
+          // map used to load there anyway.
+          timer = setTimeout(() => {
+            io.disconnect();
+            setNear(true);
+          }, 1500);
         }
       },
       { rootMargin: "400px 0px" }

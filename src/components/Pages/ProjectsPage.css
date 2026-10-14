@@ -76,6 +76,13 @@
 
 }
 
+/* Holds a screen of room while the list loads. The grid used to be empty at
+   first paint, so the footer sat right under the tabs and then jumped a whole
+   screen down when the cards arrived (CLS 0.74). */
+.projects-container--loading {
+  min-height: 100vh;
+}
+
 /* Two equal columns, every photo in the same frame. This was a 12-column
    mosaic where pairs alternated span-7 / span-5 and the narrow cell was
    cropped to 4:5 - but every source photo is 4:3 landscape, so the portrait

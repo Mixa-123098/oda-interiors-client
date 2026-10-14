@@ -5,13 +5,13 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- data-rh="true" on the description/og/twitter tags below hands them to
+         react-helmet-async (Seo.jsx), which replaces them with each page's
+         own values. Without it every page carried two of each, and these
+         site-wide defaults came first - share previews of a project showed
+         the logo and the generic title. They stay here for the bare shell. -->
     <meta
+      data-rh="true"
       name="description"
       content="ODA is an interior design and architecture studio based in Ukraine and working worldwide. We design apartments, private houses, and public interiors, from concept to finished space."
     />
@@ -29,16 +29,16 @@
 
     <title>ODA — Interior Design & Architecture Studio, Ukraine and Worldwide</title>
 
-    <!-- Default Open Graph / Twitter tags (per-page values are overridden at
-         runtime by the Seo component; these are the fallback for crawlers). -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="ODA" />
-    <meta property="og:title" content="ODA — Interior Design & Architecture Studio, Ukraine and Worldwide" />
-    <meta property="og:description" content="ODA is an interior design and architecture studio based in Ukraine and working worldwide. We design apartments, private houses, and public interiors, from concept to finished space." />
-    <meta property="og:url" content="https://oda-interiors.com/" />
-    <meta property="og:image" content="https://oda-interiors.com/logo512.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://oda-interiors.com/logo512.png" />
+    <!-- Default Open Graph / Twitter tags (per-page values replace them at
+         runtime via the Seo component - see data-rh above). -->
+    <meta data-rh="true" property="og:type" content="website" />
+    <meta data-rh="true" property="og:site_name" content="ODA" />
+    <meta data-rh="true" property="og:title" content="ODA — Interior Design & Architecture Studio, Ukraine and Worldwide" />
+    <meta data-rh="true" property="og:description" content="ODA is an interior design and architecture studio based in Ukraine and working worldwide. We design apartments, private houses, and public interiors, from concept to finished space." />
+    <meta data-rh="true" property="og:url" content="https://oda-interiors.com/" />
+    <meta data-rh="true" property="og:image" content="https://oda-interiors.com/logo512.png" />
+    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
+    <meta data-rh="true" name="twitter:image" content="https://oda-interiors.com/logo512.png" />
 
     <script type="application/ld+json">
       {
