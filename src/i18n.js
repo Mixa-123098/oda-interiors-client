@@ -25,7 +25,8 @@ import { dbLangFromPath } from "./lib/lang";
 //   v7 - About page story rewritten (was about building the website)
 //   v8 - seo.* titles/descriptions per language, admin language-address
 //        strings, missing keys filled in for admin-added languages
-const CACHE_VERSION = "v8";
+//   v9 - gallery.photo ("photo {{n}}") for per-photo alt texts
+const CACHE_VERSION = "v9";
 
 i18n
   .use(ChainedBackend)
