@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./SecondBlock.css";
 
 import Commercial from "../../assets/photo_2023-11-03_12-42-15.jpg";
@@ -7,6 +7,9 @@ import Architecture from "../../assets/aero5-1.webp";
 import { Link } from "../LocalizedLink";
 
 import { useTranslation } from "react-i18next";
+
+// Each tile's own photo; the hover effect below swaps them around.
+const TILE_IMAGES = [Commercial, Resident, Architecture];
 
 function mouseOver(index) {
   let element = document.querySelectorAll(".projects-img");
@@ -64,13 +67,6 @@ const Blocks = ({ updateIndexFromSecBlock }) => {
     t("mainPage.block2.categories.residentialInteriorsTwo.subtitle"),
   ];
 
-  useEffect(() => {
-    const element = document.querySelectorAll(".projects-img");
-    element[0].src = Commercial;
-    element[1].src = Resident;
-    element[2].src = Architecture;
-  }, []);
-
   const projects = projectsList.map((project, index) => {
     // кароче, тут я позиционирую картинки
     let imgPosition = "";
@@ -106,7 +102,14 @@ const Blocks = ({ updateIndexFromSecBlock }) => {
             <div className="blockOverlay"></div>
             {/* Фотки желательно 16:9 формата */}
 
-            <img src="" alt="" className={`projects-img ${imgPosition}`} />
+            {/* alt="": decorative - the tile's heading names the category.
+                (src used to be "" until an effect filled it in.) */}
+            <img
+              src={TILE_IMAGES[index]}
+              alt=""
+              loading="lazy"
+              className={`projects-img ${imgPosition}`}
+            />
           </div>
         </Link>
       </div>

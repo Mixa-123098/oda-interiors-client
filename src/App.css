@@ -260,7 +260,7 @@ video {
 /* Home hero chrome over the video (before the header turns into the light
    glass bar on scroll): the same hairline shadow as the hero title, so the
    white nav and language toggle hold up on bright frames. */
-.header:not(.header--light):not(.header--glass) .nav-styles h6,
+.header:not(.header--light):not(.header--glass) .nav-styles .nav-text,
 .header:not(.header--light):not(.header--glass) .language-selector {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
@@ -322,7 +322,10 @@ video {
 
 }
 
-.nav-styles h6 {
+.nav-styles .nav-text {
+  /* Was an <h6>: keep the block box and line height the heading had. */
+  display: block;
+  line-height: 1.2;
   position: relative;
   color: var(--mainColor);
   /* Bootstrap's .5rem bottom margin on h6 pushed the link text above the
@@ -338,7 +341,7 @@ video {
 
 /* Underline draws in from the left on hover / keyboard focus (uses the
    text colour, so it works on both the dark and the light header). */
-.nav-styles h6::after {
+.nav-styles .nav-text::after {
   content: "";
   position: absolute;
   left: 0;
@@ -350,9 +353,9 @@ video {
   transform-origin: right;
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.nav-styles:hover h6::after,
-.nav-styles:focus-visible h6::after,
-.nav-styles.active h6::after {
+.nav-styles:hover .nav-text::after,
+.nav-styles:focus-visible .nav-text::after,
+.nav-styles.active .nav-text::after {
   transform: scaleX(1);
   transform-origin: left;
 }
@@ -1248,7 +1251,7 @@ footer {
     transition: filter 0.4s ease;
   }
 
-  .nav-styles h6,
+  .nav-styles .nav-text,
   .language-selector {
     transition: color 0.4s ease;
   }
@@ -1279,7 +1282,7 @@ footer {
     filter: invert(0%) !important;
   }
 
-  .header--glass .nav-styles h6,
+  .header--glass .nav-styles .nav-text,
   .header--glass .language-selector {
     color: #111 !important;
   }
@@ -1320,4 +1323,12 @@ footer {
   .header-logo {
     max-width: 52px;
   }
+}
+
+/* Log out (staff only) - was an <h6>; same size and weight as before. */
+.nav-logout {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
 }

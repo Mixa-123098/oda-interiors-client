@@ -88,53 +88,56 @@ const MainPageContainer = ({ updateIndexFromSecBlock }) => {
     <div>
       <Seo />
       <Header />
-      <div className="main">
-        <div className="overlay"></div>
+      {/* The page's own content, between the header and the footer (a <main> landmark for search engines and screen readers). */}
+      <main>
+        <div className="main">
+          <div className="overlay"></div>
 
-        <video
-          autoPlay={!liteMedia}
-          preload={liteMedia ? "none" : "auto"}
-          data-lite={liteMedia ? "1" : undefined}
-          loop
-          muted
-          playsInline
-          poster={loftPoster}
-          className="img video active "
-        >
-          <source src={loftWebm} type="video/webm" />
-          <source src={loftMp4} type="video/mp4" />
-        </video>
-        {/* Second slide's video: not downloaded until the slide is shown
-            (BottomHeader plays it on activation), so it doesn't compete with
-            the first video and the rest of the page for bandwidth. */}
-        <video
-          preload="none"
-          data-lite={liteMedia ? "1" : undefined}
-          loop
-          muted
-          playsInline
-          poster={chehPoster}
-          className="video"
-        >
-          <source src={chehWebm} type="video/webm" />
-          <source src={chehMp4} type="video/mp4" />
-        </video>
-        <img src={bgvideo3} alt="" className="img video" />
+          <video
+            autoPlay={!liteMedia}
+            preload={liteMedia ? "none" : "auto"}
+            data-lite={liteMedia ? "1" : undefined}
+            loop
+            muted
+            playsInline
+            poster={loftPoster}
+            className="img video active "
+          >
+            <source src={loftWebm} type="video/webm" />
+            <source src={loftMp4} type="video/mp4" />
+          </video>
+          {/* Second slide's video: not downloaded until the slide is shown
+              (BottomHeader plays it on activation), so it doesn't compete with
+              the first video and the rest of the page for bandwidth. */}
+          <video
+            preload="none"
+            data-lite={liteMedia ? "1" : undefined}
+            loop
+            muted
+            playsInline
+            poster={chehPoster}
+            className="video"
+          >
+            <source src={chehWebm} type="video/webm" />
+            <source src={chehMp4} type="video/mp4" />
+          </video>
+          <img src={bgvideo3} alt="" className="img video" />
 
-        <div className="header-content">
-          <BottomHeader />
+          <div className="header-content">
+            <BottomHeader />
+          </div>
+          <ScrollHint />
         </div>
-        <ScrollHint />
-      </div>
 
-      <FirstBlok />
-      <FeaturedProjects />
-      <SecondBlock updateIndexFromSecBlock={updateIndexFromSecBlock} />
-      <SixBlock />
-      <ForthBlock />
-      <FifthBlock />
-      <TrustBar />
-      <MainCta />
+        <FirstBlok />
+        <FeaturedProjects />
+        <SecondBlock updateIndexFromSecBlock={updateIndexFromSecBlock} />
+        <SixBlock />
+        <ForthBlock />
+        <FifthBlock />
+        <TrustBar />
+        <MainCta />
+      </main>
       <Footer />
     </div>
   );
@@ -211,7 +214,7 @@ const LangGate = observer(({ children }) => {
 
 function App() {
   useRevealOnScroll();
-  const { pathname } = useLocation();
+  const { pathname, search, hash } = useLocation();
   const [indexFromSecBlock, setIndexFromSecBlock] = useState(0);
   const updateIndexFromSecBlock = (index) => {
     setIndexFromSecBlock(index + 1);
@@ -257,6 +260,11 @@ function App() {
         ))}
         <Route path="*" element={notFound} />
       </Routes>
+      {/* Routes match case-insensitively, so /PROJECTS was a second copy of
+          /projects. Every real address is lowercase. */}
+      {/[A-Z]/.test(pathname) && (
+        <Navigate to={pathname.toLowerCase() + search + hash} replace />
+      )}
 
       {/* <QuickContact /> */}      {/* временно убрал, делаю мобильную версию */}
 

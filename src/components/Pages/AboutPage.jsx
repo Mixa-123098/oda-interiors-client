@@ -162,19 +162,21 @@ const AboutPage = () => {
         description={t("seo.about.description")}
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
-      <PagesHeader title={t("aboutPage.aboutUs")} />
+      <main>
+        <PagesHeader title={t("aboutPage.aboutUs")} />
 
-      <OurStory />
-      {/* Team straight after the story: on the first screen the portraits
-          start under the text, cut by the bottom edge - the cue that the page
-          goes on. The trust strip closes the page before the CTA, which is
-          what it was designed for (it used to sit second and its bottom rule
-          read as the end of the page). */}
-      <OurTeam />
-      <Ideology />
-      <Values />
-      <TrustBar />
-      <AboutCta />
+        <OurStory />
+        {/* Team straight after the story: on the first screen the portraits
+            start under the text, cut by the bottom edge - the cue that the page
+            goes on. The trust strip closes the page before the CTA, which is
+            what it was designed for (it used to sit second and its bottom rule
+            read as the end of the page). */}
+        <OurTeam />
+        <Ideology />
+        <Values />
+        <TrustBar />
+        <AboutCta />
+      </main>
 
       <Footer settings={{ color: `black`, bgColor: `white`, shadow: true }} />
     </div>

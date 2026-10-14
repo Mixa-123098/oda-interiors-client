@@ -35,28 +35,30 @@ const PricePage = () => {
         description={t("seo.price.description")}
       />
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
-      <PagesHeader title={t("pricesPage.ourPrices")} />
-      <div className="container mt-5 mb-5">
-        <div className="price-list">
-          <PriceCard
-            title={t("pricesPage.tariff1.size")}
-            price={t("pricesPage.tariff1.price")}
-          />
-          <PriceCard
-            title={t("pricesPage.tariff2.size")}
-            price={t("pricesPage.tariff2.price")}
-          />
-          <PriceCard
-            title={t("pricesPage.tariff3.size")}
-            price={t("pricesPage.tariff3.price")}
-          />
-          <PriceCard
-            title={t("pricesPage.tariff4.size")}
-            price={t("pricesPage.tariff4.price")}
-          />
+      <main>
+        <PagesHeader title={t("pricesPage.ourPrices")} />
+        <div className="container mt-5 mb-5">
+          <div className="price-list">
+            <PriceCard
+              title={t("pricesPage.tariff1.size")}
+              price={t("pricesPage.tariff1.price")}
+            />
+            <PriceCard
+              title={t("pricesPage.tariff2.size")}
+              price={t("pricesPage.tariff2.price")}
+            />
+            <PriceCard
+              title={t("pricesPage.tariff3.size")}
+              price={t("pricesPage.tariff3.price")}
+            />
+            <PriceCard
+              title={t("pricesPage.tariff4.size")}
+              price={t("pricesPage.tariff4.price")}
+            />
+          </div>
+          <p className="price-note">{t("pricesPage.additionalInfo")}</p>
         </div>
-        <p className="price-note">{t("pricesPage.additionalInfo")}</p>
-      </div>
+      </main>
       <Footer settings={{ color: "black", bgColor: "white", shadow: true }} />
     </div>
   );

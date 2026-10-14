@@ -76,7 +76,9 @@ const Navbar = observer(({ fontColor, rep }) => {
         className="nav-link nav-styles"
         onClick={ScrollToTop}
       >
-        <h6 style={{ color: fontColor }}>{navbarItemsList[index]}</h6>
+        <span className="nav-text" style={{ color: fontColor }}>
+          {navbarItemsList[index]}
+        </span>
       </NavLink>
     );
   });
@@ -110,13 +112,13 @@ const Navbar = observer(({ fontColor, rep }) => {
         {navbar}
         <LanguageSelector color={fontColor} />
         {isAuthenticated ? (
-          <h6
+          <button
+            type="button"
             onClick={handleLogout}
-            style={{ color: fontColor }}
-            className="bg-dark text-light p-2 rounded"
+            className="nav-logout bg-dark text-light p-2 rounded border-0"
           >
             {t("navbar.logoutButton")}
-          </h6>
+          </button>
         ) : null}
       </nav>
 
@@ -133,13 +135,15 @@ const Navbar = observer(({ fontColor, rep }) => {
           <ul className="menu__box">
             {hamburgerMenu}
             {isAuthenticated ? (
-              <h6
-                onClick={handleLogout}
-                style={{ color: fontColor }}
-                className="bg-dark text-light p-2 rounded"
-              >
-                {t("navbar.logoutButton")}
-              </h6>
+              <li>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="nav-logout bg-dark text-light p-2 rounded border-0"
+                >
+                  {t("navbar.logoutButton")}
+                </button>
+              </li>
             ) : null}
             <li>
               <LanguageSelector />
@@ -220,7 +224,7 @@ function Header({ fontColor, invert, rep }) {
           <Link to="/" onClick={ScrollToTop}>
             <img
               src={logo}
-              alt="logo"
+              alt="ODA"
               className="header-logo"
               style={{
                 filter: rep || scroll === 0 ? invert : `invert(100%)`,

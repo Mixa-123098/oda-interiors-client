@@ -32,7 +32,8 @@ const FeaturedProjects = () => {
   const localized = (p) => {
     const tr = p.source_lang !== i18n.language && p.translations?.[i18n.language];
     return {
-      name: (tr && tr.name) || p.name,
+      // trim: source names come padded from a CHAR(100) column.
+      name: ((tr && tr.name) || p.name || "").trim(),
       city: (tr && tr.city) || p.city,
       country: (tr && tr.country) || p.country,
     };

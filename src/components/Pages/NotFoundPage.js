@@ -15,6 +15,9 @@ const NotFoundPage = () => {
       <Helmet>
         <title>{`404 — ${t("notFoundPage.title")}`}</title>
         <meta name="robots" content="noindex" />
+        {/* Read by the prerender service (prerender/server.js): bots get a
+            real HTTP 404 instead of a 200 for a page that doesn't exist. */}
+        <meta name="prerender-status-code" content="404" />
       </Helmet>
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
       <main className="not-found-main">

@@ -134,36 +134,38 @@ const AdminPage = observer(() => {
     <>
       {noindex}
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
-      {/* Title hidden like on the public pages: the "Edit" nav item is
-          highlighted and the mobile header names the section. */}
-      <PagesHeader title={t("editPage.adminPanel")} />
+      <main>
+        {/* Title hidden like on the public pages: the "Edit" nav item is
+            highlighted and the mobile header names the section. */}
+        <PagesHeader title={t("editPage.adminPanel")} />
 
-      {/* Sidebar menu on the left, the working area takes the rest of the
-          width (was a row of tabs above the content). */}
-      <div className="admin-layout">
-        <nav className="admin-sidebar" aria-label={t("editPage.adminPanel")}>
-          <ul className="nav admin-tabs">
-            {tabs.map((tab) => (
-              <li className="nav-item" key={tab.key}>
-                <button
-                  type="button"
-                  className={`nav-link${currentTab.key === tab.key ? " active" : ""}`}
-                  aria-current={currentTab.key === tab.key ? "page" : undefined}
-                  onClick={() => setActiveTab(tab.key)}
-                >
-                  {tab.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Sidebar menu on the left, the working area takes the rest of the
+            width (was a row of tabs above the content). */}
+        <div className="admin-layout">
+          <nav className="admin-sidebar" aria-label={t("editPage.adminPanel")}>
+            <ul className="nav admin-tabs">
+              {tabs.map((tab) => (
+                <li className="nav-item" key={tab.key}>
+                  <button
+                    type="button"
+                    className={`nav-link${currentTab.key === tab.key ? " active" : ""}`}
+                    aria-current={currentTab.key === tab.key ? "page" : undefined}
+                    onClick={() => setActiveTab(tab.key)}
+                  >
+                    {tab.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <div className="admin-tab-content">
-          <ActiveComponent />
+          <div className="admin-tab-content">
+            <ActiveComponent />
+          </div>
         </div>
-      </div>
 
-      <CropModalForm />
+        <CropModalForm />
+      </main>
       <Footer settings={{ color: "black", bgColor: "white", shadow: true }} />
     </>
   );

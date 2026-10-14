@@ -43,19 +43,47 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "ProfessionalService",
-        "name": "ODA — Interior Design & Architecture Studio",
-        "url": "https://oda-interiors.com",
-        "image": "https://oda-interiors.com/logo512.png",
-        "logo": "https://oda-interiors.com/logo512.png",
-        "description": "Interior design and architecture studio based in Ukraine and working worldwide — apartments, private houses and public interiors from concept to finished space.",
-        "email": "marynaprokhorova@gmail.com",
-        "telephone": "+380676397018",
-        "areaServed": "Worldwide",
-        "address": { "@type": "PostalAddress", "addressCountry": "UA" },
-        "sameAs": [
-          "https://www.instagram.com/_svidoma_/",
-          "https://t.me/marynaprokhorova_design"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://oda-interiors.com/#organization",
+            "name": "ODA",
+            "alternateName": ["ODA Interiors", "ODA — Interior Design & Architecture Studio"],
+            "url": "https://oda-interiors.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://oda-interiors.com/logo512.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://oda-interiors.com/logo512.png",
+            "description": "Interior design and architecture studio based in Ukraine and working worldwide — apartments, private houses and public interiors from concept to finished space.",
+            "email": "marynaprokhorova@gmail.com",
+            "telephone": "+380676397018",
+            "address": { "@type": "PostalAddress", "addressCountry": "UA" },
+            "areaServed": "Worldwide",
+            "knowsAbout": ["Interior design", "Architecture", "Apartment interior design", "Private house design", "Public interior design"],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer service",
+              "telephone": "+380676397018",
+              "email": "marynaprokhorova@gmail.com",
+              "availableLanguage": ["en", "uk", "sk", "pl", "es", "fr"]
+            },
+            "sameAs": [
+              "https://www.instagram.com/_svidoma_/",
+              "https://t.me/marynaprokhorova_design"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://oda-interiors.com/#website",
+            "name": "ODA",
+            "alternateName": "ODA Interiors",
+            "url": "https://oda-interiors.com/",
+            "inLanguage": ["en", "uk", "sk", "pl", "es", "fr"],
+            "publisher": { "@id": "https://oda-interiors.com/#organization" }
+          }
         ]
       }
     </script>

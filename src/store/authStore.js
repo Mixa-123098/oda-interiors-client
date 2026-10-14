@@ -27,8 +27,9 @@ class AuthStore {
   async checkAuth() {
     try {
       const response = await fetch(`${API_URL}/me`, { credentials: "include" });
-      if (response.ok) {
-        const user = await response.json();
+      // Signed-out visitors get 200 with null (not a 401) - see server /me.
+      const user = response.ok ? await response.json() : null;
+      if (user) {
         runInAction(() => {
           this.isAuthenticated = true;
           this.isAdmin = user.role === "admin";

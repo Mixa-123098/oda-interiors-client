@@ -4,10 +4,9 @@ import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import languagesStore from "../store/languagesStore";
 import useLang from "../lib/useLang";
-import { DEFAULT_LANG, localizePath, toUrlCode } from "../lib/lang";
+import { DEFAULT_LANG, SITE_URL, localizePath, toUrlCode } from "../lib/lang";
 
 const SITE_NAME = "ODA";
-const SITE_URL = "https://oda-interiors.com";
 // English fallbacks for the seo.default.* translations (used until they load).
 const DEFAULT_TITLE = `${SITE_NAME} — Interior Design & Architecture Studio, Ukraine and Worldwide`;
 const DEFAULT_DESCRIPTION =
@@ -24,11 +23,17 @@ const OG_LOCALES = {
 
 // languages: the app codes this page exists in (a project need not be
 // translated into every language). Defaults to all of the site's languages.
-const Seo = observer(({ title, description, image, languages }) => {
+// path: the page's own address without language prefix, when the URL it was
+// reached at may differ (e.g. "/projects/6" for "/projects/6%20").
+const Seo = observer(({ title, description, image, languages, jsonLd, path }) => {
   const { t } = useTranslation();
-  const { lang, basePath } = useLang();
+  const { lang, basePath: urlBasePath } = useLang();
+  const basePath = path || urlBasePath;
   const cleanTitle = title?.trim();
-  const cleanDescription = description?.trim();
+  // A placeholder like "." (some project briefs are just that) is no
+  // description at all - the site-wide one is better than that.
+  const cleanDescription =
+    description?.trim().length >= 20 ? description.trim() : undefined;
   const fullTitle = cleanTitle
     ? `${cleanTitle} — ${SITE_NAME}`
     : t("seo.default.title", DEFAULT_TITLE);
@@ -72,6 +77,9 @@ const Seo = observer(({ title, description, image, languages }) => {
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
       <meta name="twitter:image" content={ogImage} />
+      {/* Page-level structured data (the site-wide Organization/WebSite
+          graph is static in index.html). */}
+      {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
     </Helmet>
   );
 });

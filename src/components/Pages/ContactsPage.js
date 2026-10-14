@@ -128,72 +128,74 @@ const ContactsPage = () => {
         description={t("seo.contacts.description")}
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
-      <PagesHeader title={t("contactsPage.contacts")} />
-      <div className="container my-5" style={{ minHeight: "25vh" }}>
-        <div className="contacts-layout">
-          <InquiryForm />
+      <main>
+        <PagesHeader title={t("contactsPage.contacts")} />
+        <div className="container my-5" style={{ minHeight: "25vh" }}>
+          <div className="contacts-layout">
+            <InquiryForm />
 
-          <div className="contacts-direct">
-            <h2 className="contacts-form-title contacts-direct-title">
-              {t("contactsPage.direct")}
-            </h2>
-            <div className="contacts-details">
-              <div className="contacts-detail">
-                <span className="contacts-detail-label">
-                  {t("contactsPage.telegram")}
-                </span>
-                <a
-                  href="https://t.me/marynaprokhorova_design"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  @marynaprokhorova_design
-                </a>
-              </div>
-              <div className="contacts-detail">
-                <span className="contacts-detail-label">
-                  {t("contactsPage.instagram")}
-                </span>
-                <a
-                  href="https://www.instagram.com/_svidoma_/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  @_svidoma_
-                </a>
-              </div>
-              <div className="contacts-detail">
-                <span className="contacts-detail-label">
-                  {t("contactsPage.email")}
-                </span>
-                <a href="mailto:marynaprokhorova@gmail.com">
-                  marynaprokhorova@gmail.com
-                </a>
-              </div>
-              <div className="contacts-detail">
-                <span className="contacts-detail-label">
-                  {t("contactsPage.telephone")}
-                </span>
-                <span className="contacts-phone">
-                  <a href="tel:+380676397018">+380 67 639 70 18</a>
-                  <span className="contacts-phone-apps">
-                    <a href="viber://chat?number=%2B380676397018">
-                      {t("contactsPage.viber")}
-                    </a>
-                    <a
-                      href="https://wa.me/380676397018"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      WhatsApp
-                    </a>
+            <div className="contacts-direct">
+              <h2 className="contacts-form-title contacts-direct-title">
+                {t("contactsPage.direct")}
+              </h2>
+              <div className="contacts-details">
+                <div className="contacts-detail">
+                  <span className="contacts-detail-label">
+                    {t("contactsPage.telegram")}
                   </span>
-                </span>
+                  <a
+                    href="https://t.me/marynaprokhorova_design"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @marynaprokhorova_design
+                  </a>
+                </div>
+                <div className="contacts-detail">
+                  <span className="contacts-detail-label">
+                    {t("contactsPage.instagram")}
+                  </span>
+                  <a
+                    href="https://www.instagram.com/_svidoma_/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @_svidoma_
+                  </a>
+                </div>
+                <div className="contacts-detail">
+                  <span className="contacts-detail-label">
+                    {t("contactsPage.email")}
+                  </span>
+                  <a href="mailto:marynaprokhorova@gmail.com">
+                    marynaprokhorova@gmail.com
+                  </a>
+                </div>
+                <div className="contacts-detail">
+                  <span className="contacts-detail-label">
+                    {t("contactsPage.telephone")}
+                  </span>
+                  <span className="contacts-phone">
+                    <a href="tel:+380676397018">+380 67 639 70 18</a>
+                    <span className="contacts-phone-apps">
+                      <a href="viber://chat?number=%2B380676397018">
+                        {t("contactsPage.viber")}
+                      </a>
+                      <a
+                        href="https://wa.me/380676397018"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        WhatsApp
+                      </a>
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
       <Footer settings={{ color: `black`, bgColor: `white`, shadow: true }} />
     </div>
   );

@@ -6,6 +6,7 @@
 // COUNTRY code - the language is "uk". URLs and hreflang use "uk"; everything
 // inside the app keeps "ua".
 export const DEFAULT_LANG = "en";
+export const SITE_URL = "https://oda-interiors.com";
 const DB_TO_URL = { ua: "uk" };
 const URL_TO_DB = { uk: "ua" };
 // Top-level paths short enough to look like a language prefix (the server

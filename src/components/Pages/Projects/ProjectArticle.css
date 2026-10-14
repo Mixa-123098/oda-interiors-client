@@ -64,7 +64,10 @@
   border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 .brif-info-styles > div {
-  padding: 0.9rem 0;
+  /* The extra 1.5em top is the line an empty <img src=""> used to take up at
+     the start of each row; the images were removed (invalid markup), the
+     spacing the design was tuned with stays. */
+  padding: calc(0.9rem + 1.5em) 0 0.9rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 .brif-info-styles p {

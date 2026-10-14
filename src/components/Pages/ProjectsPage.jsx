@@ -36,6 +36,15 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
       ]
         .filter(Boolean)
         .join(" · ");
+      // One name for the caption and the photo's alt, in the page's language.
+      // (The alt used to be the raw source name - Ukrainian on every
+      // language's page, and padded with spaces by the CHAR(100) column.)
+      const nameKey = `projects.project${element.id}.name`;
+      const name = (
+        t(nameKey) !== nameKey
+          ? t(nameKey)
+          : (translation && translation.name) || element.project_name || ""
+      ).trim();
 
       return (
         // id={index} used to put id="0", id="1" ... on these wrappers - no one
@@ -45,7 +54,7 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
             <div className="project-thumb-wrap">
               <ResponsiveImg
                 file={element.project_img_src}
-                alt={element.project_name || ""}
+                alt={name}
                 className="project_img"
                 sizes="(max-width: 700px) 100vw, 46vw"
                 eager={index < 2}
@@ -63,13 +72,7 @@ const ProjectsList = ({ focusedPage, itemsPerPage, filteredData, translations, c
               <span className="project_index">
                 {String(startIndex + index + 1).padStart(2, "0")}
               </span>
-              <h3 className="project_name">
-                {element &&
-                  (t(`projects.project${element.id}.name`) !==
-                  `projects.project${element.id}.name`
-                    ? t(`projects.project${element.id}.name`)
-                    : (translation && translation.name) || element.project_name)}
-              </h3>
+              <h3 className="project_name">{name}</h3>
               {meta ? <span className="project_meta">{meta}</span> : null}
             </div>
           </Link>
@@ -293,9 +296,11 @@ const ProjectsPage = ({ indexFromSecBlock }) => {
         description={t("seo.projects.description")}
       />
       <Header fontColor={`#000000`} invert={`invert(0%)`} rep={true} />
-      <PagesHeader title={t("projectsPage.ourProjects")} />
-      {/* <ProjectsPage2 /> */}
-      <Projects indexFromSecBlock={indexFromSecBlock} />
+      <main>
+        <PagesHeader title={t("projectsPage.ourProjects")} />
+        {/* <ProjectsPage2 /> */}
+        <Projects indexFromSecBlock={indexFromSecBlock} />
+      </main>
       <Footer settings={{ color: `black`, bgColor: `white`, shadow: true }} />
     </div>
   );

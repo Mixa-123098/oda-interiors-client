@@ -5,6 +5,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "../../LocalizedLink";
 import useLang from "../../../lib/useLang";
+import { SITE_URL, toUrlCode } from "../../../lib/lang";
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import "./ProjectArticle.css";
@@ -17,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import Loader from "../../../loader/Loader.jsx";
 import { API_URL } from "../../../config/api";
 import authStore from "../../../store/authStore";
+import NotFoundPage from "../NotFoundPage";
 
 const ProjectHeader = ({ dataList, parallaxOffset }) => {
   const { t } = useTranslation();
@@ -48,7 +50,7 @@ const ProjectHeader = ({ dataList, parallaxOffset }) => {
         <ResponsiveImg
           file={dataList && dataList.project_header_img}
           style={{ transform: `translateY(${parallaxOffset}px)` }}
-          alt={dataList?.project_name || ""}
+          alt={(dataList?.project_name || "").trim()}
           // object-fit:cover in a 100vh box: on a portrait phone the photo is
           // scaled by HEIGHT, so it needs ~1.8x the viewport height in pixels.
           sizes="max(100vw, 180vh)"
@@ -83,7 +85,6 @@ const ProjectArticleBrief = ({ dataList }) => {
 
         <div className=" brif-info-styles col-lg-3  text-start">
           <div>
-            <img src="" alt="" />
             <div className="">
               <b>{t("projects.placement")}:</b>
               <br />{" "}
@@ -107,7 +108,6 @@ const ProjectArticleBrief = ({ dataList }) => {
             </div>
           </div>
           <div>
-            <img src="" alt="" />
             <div className="">
               <p>
                 <b>{t("projects.square")}:</b>
@@ -132,7 +132,6 @@ const ProjectArticleBrief = ({ dataList }) => {
             </div>
           </div>
           <div>
-            <img src="" alt="" />
             <div className="">
               <p>
                 <b>{t("projects.endDate")}:</b>
@@ -149,7 +148,6 @@ const ProjectArticleBrief = ({ dataList }) => {
             </div>
           </div>
           <div>
-            <img src="" alt="" />
             <div className="">
               <b>{t("projects.team")}:</b>
               <br />
@@ -169,7 +167,7 @@ const ProjectArticleBrief = ({ dataList }) => {
   );
 };
 
-const ProjectArticlePlanning = ({ id, translation }) => {
+const ProjectArticlePlanning = ({ id, translation, name }) => {
   const { t } = useTranslation();
 
   const [blueprints, setBlueprint] = useState();
@@ -177,6 +175,9 @@ const ProjectArticlePlanning = ({ id, translation }) => {
   // opens in the same viewer as the gallery - as a set of one, which hides the
   // arrows and the counter.
   const [planOpen, setPlanOpen] = useState(false);
+  const planAlt = name
+    ? `${name} — ${t("projects.blueprintDescription")}`
+    : t("projects.blueprintDescription");
 
   useEffect(() => {
     fetch(`${API_URL}/blueprints`, { credentials: "include" })
@@ -200,7 +201,7 @@ const ProjectArticlePlanning = ({ id, translation }) => {
             >
               <ResponsiveImg
                 file={blueprints.img}
-                alt={t("projects.blueprintDescription")}
+                alt={planAlt}
                 className="planning-img"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
@@ -232,7 +233,7 @@ const ProjectArticlePlanning = ({ id, translation }) => {
                 {
                   id: blueprints.id,
                   img: blueprints.img,
-                  alt: t("projects.blueprintDescription"),
+                  alt: planAlt,
                 },
               ]
             : []
@@ -266,6 +267,12 @@ const ProjectArticleImges = ({ id, name }) => {
 
   if (!projectImges.length) return null;
 
+  // "Townhouse — photo 3": each photo gets its own description.
+  const photoAlt = (i) =>
+    [name, t("gallery.photo", { n: i + 1, defaultValue: "photo {{n}}" })]
+      .filter(Boolean)
+      .join(" — ");
+
   // One shared 3:4 cell for every photo. The source set is a mix of 3:4 and
   // 4:3 at ~380-700px, so laying them out at their own sizes left ragged
   // columns and wide empty gutters; cropping them to one ratio makes the page
@@ -288,7 +295,7 @@ const ProjectArticleImges = ({ id, name }) => {
             >
               <ResponsiveImg
                 file={element.img}
-                alt={name || ""}
+                alt={photoAlt(i)}
                 className="gallery-img"
                 sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw"
               />
@@ -298,10 +305,10 @@ const ProjectArticleImges = ({ id, name }) => {
       </section>
 
       <Lightbox
-        items={projectImges.map((element) => ({
+        items={projectImges.map((element, i) => ({
           id: element.id,
           img: element.img,
-          alt: name || "",
+          alt: photoAlt(i),
         }))}
         index={openAt}
         onClose={() => setOpenAt(null)}
@@ -411,6 +418,9 @@ const ProjectArticle = observer(() => {
   // viewable there — it used to silently fall back to the source-language
   // text, which looked translated when it wasn't.
   const [notAvailable, setNotAvailable] = useState(false);
+  // Set when the project list couldn't be loaded at all - then a missing
+  // project means "unknown", not "doesn't exist", and must not become a 404.
+  const [fetchFailed, setFetchFailed] = useState(false);
   // console.log(dataList);
   const [scrollY, setScrollY] = useState(0);
   // i18n is a module singleton, so react-hooks can't see i18n.language as a
@@ -459,6 +469,7 @@ const ProjectArticle = observer(() => {
       })
       .catch((error) => {
         console.error("Error fetching project data:", error);
+        setFetchFailed(true);
         setLoading(false);
       });
 
@@ -506,6 +517,12 @@ const ProjectArticle = observer(() => {
     return <Loader />;
   }
 
+  // No such (published) project: the 404 page, which is noindex and makes
+  // the prerender answer bots with a real 404 (was an empty page on 200).
+  if (!dataList && !fetchFailed) {
+    return <NotFoundPage />;
+  }
+
   const resolvedDataList =
     dataList &&
     (translation
@@ -525,7 +542,7 @@ const ProjectArticle = observer(() => {
   const briefKey = `projects.project${resolvedDataList?.id}.brief`;
   const seoTitle =
     resolvedDataList &&
-    (t(nameKey) !== nameKey ? t(nameKey) : resolvedDataList.project_name);
+    (t(nameKey) !== nameKey ? t(nameKey) : resolvedDataList.project_name || "").trim();
   const seoDescription =
     resolvedDataList &&
     (t(briefKey) !== briefKey ? t(briefKey) : resolvedDataList.project_brief);
@@ -541,6 +558,55 @@ const ProjectArticle = observer(() => {
   const projectLanguages =
     dataList && [dataList.source_lang, ...(dataList.translated_langs || [])];
 
+  // Structured data: where the page sits (breadcrumbs) and what it shows -
+  // a project by the studio, with its photo and place.
+  const pagePath = resolvedDataList && `/projects/${resolvedDataList.id}`;
+  const textOr = (key, fallback) => (t(key) !== key ? t(key) : fallback || "").trim();
+  const jsonLd = resolvedDataList && {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          ["/", t("navbar.mainPage")],
+          ["/projects", t("navbar.projectsPage")],
+          [pagePath, seoTitle],
+        ].map(([path, name], i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name,
+          item: SITE_URL + lp(path),
+        })),
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": `${SITE_URL}${lp(pagePath)}#project`,
+        name: seoTitle,
+        url: SITE_URL + lp(pagePath),
+        inLanguage: toUrlCode(lang),
+        ...(seoDescription && seoDescription.trim().length > 20
+          ? { description: seoDescription.trim() }
+          : {}),
+        ...(seoImage ? { image: seoImage } : {}),
+        locationCreated: {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: textOr(
+              `projects.project${resolvedDataList.id}.city`,
+              resolvedDataList.project_city
+            ),
+            addressCountry: textOr(
+              `projects.project${resolvedDataList.id}.country`,
+              resolvedDataList.project_country
+            ),
+          },
+        },
+        creator: { "@id": `${SITE_URL}/#organization` },
+      },
+    ],
+  };
+
   const isStaff =
     authStore.user?.role === "admin" || authStore.user?.role === "moderator";
 
@@ -551,6 +617,8 @@ const ProjectArticle = observer(() => {
         description={seoDescription}
         image={seoImage}
         languages={projectLanguages}
+        path={pagePath}
+        jsonLd={jsonLd}
       />
       {isStaff && resolvedDataList?.is_hidden && (
         <div
@@ -561,12 +629,14 @@ const ProjectArticle = observer(() => {
         </div>
       )}
       <Header />
-      <ProjectHeader dataList={resolvedDataList} parallaxOffset={parallaxOffset} />
-      <ProjectArticleBrief dataList={resolvedDataList} />
-      <ProjectArticlePlanning id={id} translation={translation} />
-      <ProjectArticleImges id={id} name={seoTitle} />
+      <main>
+        <ProjectHeader dataList={resolvedDataList} parallaxOffset={parallaxOffset} />
+        <ProjectArticleBrief dataList={resolvedDataList} />
+        <ProjectArticlePlanning id={id} translation={translation} name={seoTitle} />
+        <ProjectArticleImges id={id} name={seoTitle} />
 
-      <PrevAndNextProject id={id} />
+        <PrevAndNextProject id={id} />
+      </main>
       <Footer />
     </>
   );

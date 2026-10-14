@@ -27,15 +27,17 @@ const MapPage = () => {
         description={t("seo.map.description")}
       />
       <Header fontColor="#000000" invert="invert(0%)" rep={true} />
-      <PagesHeader title={t("mapPage.title")} />
-      <div className="container map-page-body">
-        <div className="map-page-meta">
-          <span>{t("mapPage.subtitle")}</span>
-          {count !== null && <span>{t("mapPage.count", { count })}</span>}
+      <main>
+        <PagesHeader title={t("mapPage.title")} />
+        <div className="container map-page-body">
+          <div className="map-page-meta">
+            <span>{t("mapPage.subtitle")}</span>
+            {count !== null && <span>{t("mapPage.count", { count })}</span>}
+          </div>
+          <ProjectsMap variant="light" height="min(70vh, 640px)" interactive />
+          <p className="map-page-hint">{t("mapPage.hint")}</p>
         </div>
-        <ProjectsMap variant="light" height="min(70vh, 640px)" interactive />
-        <p className="map-page-hint">{t("mapPage.hint")}</p>
-      </div>
+      </main>
       <Footer
         settings={{ color: "black", bgColor: "white", shadow: true }}
         hideMap
