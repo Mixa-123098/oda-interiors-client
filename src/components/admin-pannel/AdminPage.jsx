@@ -14,6 +14,7 @@ import InquiriesManager from "./InquiriesManager";
 import Footer from "../Footer";
 import CropModalForm from "./CropModalForm";
 import ChangePasswordForm from "./ChangePasswordForm";
+import MyAccount from "./MyAccount";
 import { useTranslation } from "react-i18next";
 import Loader from "../../loader/Loader";
 
@@ -47,6 +48,12 @@ const ALL_TABS = [
     labelKey: "editPage.languages.title",
     Component: LanguagesManager,
     roles: ["admin"],
+  },
+  {
+    key: "myAccount",
+    labelKey: "editPage.account.title",
+    Component: MyAccount,
+    roles: ["admin", "moderator"],
   },
   {
     key: "changePassword",

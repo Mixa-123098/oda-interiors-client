@@ -22,6 +22,10 @@ const UsersStatus = observer(() => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  // Inline email editing: one row at a time.
+  const [editingEmailId, setEditingEmailId] = useState(null);
+  const [emailDraft, setEmailDraft] = useState("");
+  const [emailError, setEmailError] = useState(null); // { userId, message } | null
 
   const roleLabels = {
     admin: t("editPage.usersList.roleAdmin"),
@@ -155,6 +159,49 @@ const UsersStatus = observer(() => {
     (user) => user.username === authStore.user?.username
   );
 
+  const startEditingEmail = (user) => {
+    setEditingEmailId(user.id);
+    setEmailDraft(user.email || "");
+    setEmailError(null);
+  };
+
+  const saveEmail = async (user) => {
+    setEmailError(null);
+    setSavingUserId(user.id);
+    try {
+      const response = await fetch(
+        `${API_URL}/users/${encodeURIComponent(user.username)}/email`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailDraft }),
+        }
+      );
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "update_failed");
+      setUsers((prevUsers) =>
+        prevUsers.map((u) => (u.id === user.id ? { ...u, email: data.user.email } : u))
+      );
+      setEditingEmailId(null);
+      // Their own email: keep "My account" in step.
+      if (user.username === authStore.user?.username) authStore.checkAuth();
+    } catch (error) {
+      console.error("Error updating email:", error);
+      setEmailError({
+        userId: user.id,
+        message:
+          error.message === "invalid_email"
+            ? t("editPage.usersList.invalidEmail")
+            : error.message === "email_taken"
+            ? t("editPage.usersList.emailTaken")
+            : t("editPage.usersList.emailUpdateError"),
+      });
+    } finally {
+      setSavingUserId(null);
+    }
+  };
+
   const changeRole = async (user, newRole) => {
     if (user.id === currentUser?.id || newRole === user.role) return;
     if (!window.confirm(`${roleActionLabels[newRole]} — ${user.username}?`)) return;
@@ -186,9 +233,10 @@ const UsersStatus = observer(() => {
   };
 
   const visibleUsers = users.filter((user) => {
-    const matchesSearch = user.username
-      .toLowerCase()
-      .includes(search.trim().toLowerCase());
+    const query = search.trim().toLowerCase();
+    const matchesSearch =
+      user.username.toLowerCase().includes(query) ||
+      (user.email || "").toLowerCase().includes(query);
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -226,7 +274,7 @@ const UsersStatus = observer(() => {
           type="text"
           className="form-control"
           style={{ maxWidth: 260 }}
-          placeholder={t("editPage.usersList.searchPlaceholder")}
+          placeholder={t("editPage.usersList.searchNameEmail")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -326,6 +374,7 @@ const UsersStatus = observer(() => {
         <thead>
           <tr>
             <th>{t("editPage.usersList.username")}</th>
+            <th>{t("editPage.usersList.email")}</th>
             <th>{t("editPage.usersList.role")}</th>
             <th className="text-end">{t("editPage.usersList.actions")}</th>
           </tr>
@@ -356,6 +405,65 @@ const UsersStatus = observer(() => {
                     <div className="text-danger small">
                       {deleteErrorMessage}
                     </div>
+                  )}
+                </td>
+                <td>
+                  {editingEmailId === user.id ? (
+                    <form
+                      className="d-flex flex-wrap gap-2 align-items-center"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        saveEmail(user);
+                      }}
+                    >
+                      <input
+                        type="email"
+                        className="form-control form-control-sm"
+                        style={{ maxWidth: 240 }}
+                        value={emailDraft}
+                        onChange={(e) => setEmailDraft(e.target.value)}
+                        disabled={savingUserId === user.id}
+                        autoFocus
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="btn btn-dark btn-sm"
+                        disabled={savingUserId === user.id}
+                      >
+                        {t("editPage.usersList.saveEmail")}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => {
+                          setEditingEmailId(null);
+                          setEmailError(null);
+                        }}
+                        disabled={savingUserId === user.id}
+                      >
+                        {t("editPage.usersList.cancelEmail")}
+                      </button>
+                    </form>
+                  ) : (
+                    <div className="d-flex flex-wrap gap-2 align-items-center">
+                      {user.email ? (
+                        <a href={`mailto:${user.email}`}>{user.email}</a>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
+                      <button
+                        type="button"
+                        className="btn btn-link btn-sm p-0"
+                        onClick={() => startEditingEmail(user)}
+                        disabled={savingUserId === user.id}
+                      >
+                        {t("editPage.usersList.editEmail")}
+                      </button>
+                    </div>
+                  )}
+                  {emailError?.userId === user.id && (
+                    <div className="text-danger small">{emailError.message}</div>
                   )}
                 </td>
                 <td>
@@ -413,7 +521,7 @@ const UsersStatus = observer(() => {
           })}
           {visibleUsers.length === 0 && (
             <tr>
-              <td colSpan={3} className="text-muted text-center">
+              <td colSpan={4} className="text-muted text-center">
                 {t("editPage.usersList.noResults")}
               </td>
             </tr>

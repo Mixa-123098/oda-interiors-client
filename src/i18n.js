@@ -29,7 +29,8 @@ import { dbLangFromPath } from "./lib/lang";
 //   v10 - "ODA Interiors" SEO titles, new home intro, price page details,
 //         project briefs, one spelling of the team's names
 //   v11 - price page back to tariffs only (its added sections removed)
-const CACHE_VERSION = "v11";
+//   v12 - admin: users' emails (list + editing), "My account" tab
+const CACHE_VERSION = "v12";
 
 i18n
   .use(ChainedBackend)
