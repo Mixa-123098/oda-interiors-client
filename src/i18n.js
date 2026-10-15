@@ -28,7 +28,8 @@ import { dbLangFromPath } from "./lib/lang";
 //   v9 - gallery.photo ("photo {{n}}") for per-photo alt texts
 //   v10 - "ODA Interiors" SEO titles, new home intro, price page details,
 //         project briefs, one spelling of the team's names
-const CACHE_VERSION = "v10";
+//   v11 - price page back to tariffs only (its added sections removed)
+const CACHE_VERSION = "v11";
 
 i18n
   .use(ChainedBackend)

@@ -25,65 +25,6 @@ const PriceCard = ({ title, price }) => {
   );
 };
 
-// t() for a key that holds a list; [] until/unless it exists.
-const listOf = (t, key) => {
-  const value = t(key, { returnObjects: true });
-  return Array.isArray(value) ? value : [];
-};
-
-// What the price buys: the design project's stages, author's supervision,
-// timeline and common questions - the page used to be four price rows only.
-const PriceDetails = () => {
-  const { t } = useTranslation();
-  const steps = listOf(t, "pricesPage.includes.items");
-  const faq = listOf(t, "pricesPage.faq.items");
-  if (!steps.length) return null;
-
-  return (
-    <div className="price-details">
-      <section className="price-section">
-        <h2 className="price-section-title">{t("pricesPage.includes.title")}</h2>
-        <ol className="price-steps">
-          {steps.map((step, index) => (
-            <li className="price-step" key={step.title}>
-              <span className="price-step-num">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className="price-step-title">{step.title}</h3>
-              <p className="price-step-text">{step.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="price-section">
-        <dl className="price-facts">
-          <div className="price-fact">
-            <dt>{t("pricesPage.supervision.title")}</dt>
-            <dd>{t("pricesPage.supervision.text")}</dd>
-          </div>
-          <div className="price-fact">
-            <dt>{t("pricesPage.timeline.title")}</dt>
-            <dd>{t("pricesPage.timeline.text")}</dd>
-          </div>
-        </dl>
-      </section>
-
-      {faq.length > 0 && (
-        <section className="price-section">
-          <h2 className="price-section-title">{t("pricesPage.faq.title")}</h2>
-          <div className="price-faq">
-            {faq.map((item) => (
-              <div className="price-faq-item" key={item.q}>
-                <h3 className="price-faq-q">{item.q}</h3>
-                <p className="price-faq-a">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-    </div>
-  );
-};
-
 const PricePage = () => {
   const { t } = useTranslation();
 
@@ -116,7 +57,6 @@ const PricePage = () => {
             />
           </div>
           <p className="price-note">{t("pricesPage.additionalInfo")}</p>
-          <PriceDetails />
         </div>
       </main>
       <Footer settings={{ color: "black", bgColor: "white", shadow: true }} />
