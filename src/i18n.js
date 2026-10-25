@@ -30,7 +30,8 @@ import { dbLangFromPath } from "./lib/lang";
 //         project briefs, one spelling of the team's names
 //   v11 - price page back to tariffs only (its added sections removed)
 //   v12 - admin: users' emails (list + editing), "My account" tab
-const CACHE_VERSION = "v12";
+//   v13 - "My account": own username/email editable
+const CACHE_VERSION = "v13";
 
 i18n
   .use(ChainedBackend)

@@ -100,6 +100,12 @@ class AuthStore {
     return !!this.user?.must_change_password;
   }
 
+  // After the user edits their own account ("My account").
+  setUser(user) {
+    this.user = user;
+    this.isAdmin = user.role === "admin";
+  }
+
   clearMustChangePassword() {
     if (this.user) {
       this.user = { ...this.user, must_change_password: false };
