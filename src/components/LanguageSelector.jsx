@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useLocation, useNavigate } from "react-router-dom";
 import languagesStore from "../store/languagesStore";
 import useLang from "../lib/useLang";
-import { localizePath, saveLang } from "../lib/lang";
+import { localizePath, saveLang, toUrlCode } from "../lib/lang";
 
 // color: text colour for the header context (dark on light pages, white on
 // hero photos) - the same value the nav links get.
@@ -32,7 +32,13 @@ const LanguageSelector = observer(({ color }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const changeLanguage = (code) => {
+  // The options are real links, so search engines can follow them from any
+  // page to its other language versions (buttons gave them nothing to
+  // crawl). A plain click still switches in-app; Ctrl/Cmd/middle click opens
+  // the link as the browser would.
+  const changeLanguage = (e, code) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
     setIsOpen(false);
     if (code === lang) return;
     saveLang(code);
@@ -62,23 +68,26 @@ const LanguageSelector = observer(({ color }) => {
           <polyline points="1,1 5,5 9,1" />
         </svg>
       </button>
-      {isOpen && (
-        <ul className="language-selector-menu">
-          {languagesStore.languages.map((l) => (
-            <li key={l.code}>
-              <button
-                type="button"
-                className={`language-selector-option${
-                  l.code === lang ? " active" : ""
-                }`}
-                onClick={() => changeLanguage(l.code)}
-              >
-                {l.code.toUpperCase()}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Always in the HTML (just hidden while closed) so the links are in
+          the snapshot crawlers get. */}
+      <ul className="language-selector-menu" hidden={!isOpen}>
+        {languagesStore.languages.map((l) => (
+          <li key={l.code}>
+            <a
+              href={localizePath(basePath, l.code)}
+              hrefLang={toUrlCode(l.code)}
+              lang={toUrlCode(l.code)}
+              className={`language-selector-option${
+                l.code === lang ? " active" : ""
+              }`}
+              aria-current={l.code === lang ? "true" : undefined}
+              onClick={(e) => changeLanguage(e, l.code)}
+            >
+              {l.code.toUpperCase()}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 });

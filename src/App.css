@@ -971,6 +971,7 @@ footer {
 .language-selector-option {
   display: block;
   width: 100%;
+  text-decoration: none;
   text-align: left;
   background: none;
   border: none;
